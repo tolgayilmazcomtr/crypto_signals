@@ -14,3 +14,4 @@ dj-database-url==2.0.0
 python-decouple==3.8
 pillow==10.0.0
 django-environ==0.10.0
+django-background-tasks==1.2.8
