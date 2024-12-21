@@ -1,4 +1,4 @@
-<!-- your_app/templates/trade_signal.html -->
+<!-- templates/trade_signal.html -->
 
 <!DOCTYPE html>
 <html lang="tr">
@@ -101,37 +101,6 @@
             color: #008080;
         }
 
-        /* Sinyal Tablosu */
-        .signals-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        .signals-table th, .signals-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        .signals-table th {
-            background-color: #f2f2f2;
-            color: #333;
-        }
-        .signals-table tr:nth-child(even){background-color: #f9f9f9;}
-        .signals-table tr:hover {background-color: #f1f1f1;}
-        .timeframe-short {
-            color: #17a2b8;
-            font-weight: bold;
-        }
-        .timeframe-medium {
-            color: #ffc107;
-            font-weight: bold;
-        }
-        .timeframe-long {
-            color: #28a745;
-            font-weight: bold;
-        }
-
-        /* TradingView */
         .tv-chart-container {
             background: #ffffff;
             border: 1px solid #008080;
@@ -148,6 +117,60 @@
             height: 100%;
         }
 
+        .signal-card {
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #333;
+            position: relative;
+            background: #fff;
+            border:1px solid #ddd;
+        }
+
+        .signal-buy {
+            border: 1px solid #28a745;
+            background: #e0f9e0;
+        }
+        .signal-sell {
+            border: 1px solid #dc3545;
+            background: #fde0e0;
+        }
+        .signal-hold {
+            border: 1px solid #ffc107;
+            background: #fff7e0;
+        }
+
+        .signal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin:0 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-icon {
+            width:15px; 
+            height:15px; 
+            border-radius:50%;
+            display:inline-block;
+        }
+        .legend-buy {
+            background:#28a745;
+        }
+        .legend-sell {
+            background:#dc3545;
+        }
+        .legend-hold {
+            background:#ffc107;
+        }
+
+        .signal-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom:20px;
+        }
+
         .legend {
             display: flex;
             gap: 10px;
@@ -160,6 +183,42 @@
             align-items:center;
             gap:5px;
             font-size:0.9rem;
+        }
+
+        .details-toggle {
+            background:none;
+            border:none;
+            color:#008080;
+            font-weight:500;
+            cursor:pointer;
+            padding:0;
+            text-decoration:underline;
+            margin-bottom:10px;
+        }
+        .details-toggle:hover {
+            opacity:0.8;
+        }
+
+        .details-section {
+            overflow:hidden;
+            max-height:0;
+            opacity:0;
+            transition: all 0.3s ease;
+            white-space: pre-line;
+            margin-bottom:0;
+        }
+
+        .details-section.open {
+            max-height:500px;
+            opacity:1;
+            padding-top:10px;
+        }
+
+        .details-section h3 {
+            margin-top:0;
+            color:#333;
+            font-weight:600;
+            margin-bottom:10px;
         }
 
         /* Preloader */
@@ -191,6 +250,42 @@
         @keyframes spin {
             100% { transform: rotate(360deg); }
         }
+        .signals-table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .signals-table th {
+        background-color: #008080;
+        color: white;
+        padding: 12px;
+    }
+    .signals-table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+    .signals-table tr:hover {
+        background-color: #f5f5f5;
+    }
+    .signal-badge {
+        padding: 6px 12px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    .buy {
+        background-color: #28a745;
+        color: white;
+    }
+    .sell {
+        background-color: #dc3545;
+        color: white;
+    }
+    .hold {
+        background-color: #ffc107;
+        color: white;
+    }
     </style>
 </head>
 <body>
@@ -234,20 +329,100 @@
             <p>Seçili parite: <strong>{{ selected_pair }}</strong></p>
         </div>
 
-        <!-- Sinyal Tablosu -->
-        <h2>Sinyaller</h2>
-        <table class="signals-table" id="signals-table">
-            <thead>
-                <tr>
-                    <th>Parite</th>
-                    <th>Sinyal</th>
-                    <th>Zaman Dilimi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Sinyaller burada görüntülenecek -->
-            </tbody>
-        </table>
+        <!-- Sinyal Kartı -->
+        {% if signal == "Buy" %}
+        <div class="signal-card signal-buy">
+            <div class="signal-title">
+                <span class="legend-icon legend-buy"></span> Al Sinyali
+            </div>
+            <div class="signal-description">
+                Piyasa şu an yukarı yönlü bir eğilimde görünüyor. Bu, alım fırsatı olabileceğini gösteriyor.
+            </div>
+            <button type="button" class="details-toggle" id="details-btn">Detay Göster</button>
+            <div class="details-section" id="details-section">
+                <h3>Detaylı İnceleme</h3>
+                {{ comment }}
+            </div>
+        </div>
+        {% elif signal == "Sell" %}
+        <div class="signal-card signal-sell">
+            <div class="signal-title">
+                <span class="legend-icon legend-sell"></span> Sat Sinyali
+            </div>
+            <div class="signal-description">
+                Piyasa şu an aşağı yönlü bir eğilimde. Elinizde varsa, satış yaparak kârı realize etmek mantıklı olabilir.
+            </div>
+            <button type="button" class="details-toggle" id="details-btn">Detay Göster</button>
+            <div class="details-section" id="details-section">
+                <h3>Detaylı İnceleme</h3>
+                {{ comment }}
+            </div>
+        </div>
+        {% else %}
+        <div class="signal-card signal-hold">
+            <div class="signal-title">
+                <span class="legend-icon legend-hold"></span> Bekle Sinyali
+            </div>
+            <div class="signal-description">
+                Piyasa kararsız veya net bir yönü yok. Yeni bir işlem açmadan önce durumu izlemek mantıklı olabilir.
+            </div>
+            <button type="button" class="details-toggle" id="details-btn">Detay Göster</button>
+            <div class="details-section" id="details-section">
+                <h3>Detaylı İnceleme</h3>
+                {{ comment }}
+            </div>
+        </div>
+        {% endif %}
+
+<h2>Sinyal Listesi</h2>
+<table class="signals-table">
+    <thead>
+        <tr>
+            <th>Parite</th>
+            <th>Sinyal</th>
+            <th>Zaman Dilimi</th>
+            <th>Sinyal Fiyatı</th>
+            <th>Hedef Fiyat</th>
+            <th>Güncellenme Tarihi</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for signal in signals %}
+        <tr {% if signal.pair == selected_pair %} style="background-color: #e6f7ff;" {% endif %}>
+            <td>{{ signal.pair }}</td>
+            <td class="signal-{{ signal.signal|lower }}">
+                {% if signal.signal == 'Buy' %}
+                    <span class="signal-badge buy">Al</span>
+                {% elif signal.signal == 'Sell' %}
+                    <span class="signal-badge sell">Sat</span>
+                {% else %}
+                    <span class="signal-badge hold">Bekle</span>
+                {% endif %}
+            </td>
+            <td>{{ signal.timeframe }}</td>
+            <td>
+                {% if signal.price_at_signal %}
+                    {{ signal.price_at_signal }}
+                {% else %}
+                    <span style="color: red;">Veri Yok</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if signal.target_price %}
+                    {{ signal.target_price }}
+                {% else %}
+                    <span style="color: red;">Veri Yok</span>
+                {% endif %}
+            </td>
+            <td>{{ signal.updated_at|date:"d F Y, H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Henüz sinyal yok.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
         <!-- TradingView Grafiği -->
         <div class="tv-chart-container tradingview-widget-container">
@@ -255,6 +430,7 @@
         </div>
         {% with symbol_upper=selected_pair|upper %}
         {% with tv_symbol='BINANCE:'|add:symbol_upper %}
+        
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 new TradingView.widget({
@@ -280,9 +456,9 @@
 
         <!-- Legend (açıklama) -->
         <div class="legend">
-            <span><div class="legend-icon legend-buy" style="width:15px; height:15px; border-radius:50%; background:#28a745;"></div> Alım yönü</span>
-            <span><div class="legend-icon legend-sell" style="width:15px; height:15px; border-radius:50%; background:#dc3545;"></div> Satış yönü</span>
-            <span><div class="legend-icon legend-hold" style="width:15px; height:15px; border-radius:50%; background:#ffc107;"></div> Bekle</span>
+            <span><div class="legend-icon legend-buy"></div> Alım yönü</span>
+            <span><div class="legend-icon legend-sell"></div> Satış yönü</span>
+            <span><div class="legend-icon legend-hold"></div> Bekle</span>
         </div>
 
     </div>
@@ -310,75 +486,54 @@
             $('#preloader').hide();
         });
 
-        // Canlı Fiyat ve Sinyal Güncelleme
-        document.addEventListener('DOMContentLoaded', function () {
-            var selectedPair = "{{ selected_pair }}";  // Seçili pariteyi JavaScript'e aktar
-
-            function fetchLivePrice() {
-                $.ajax({
-                    url: "{% url 'live-price' %}",
-                    data: {
-                        'symbol': selectedPair
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        if (data.price) {
-                            $('#live-price').text(data.price);
-                        } else if (data.error) {
-                            $('#live-price').text("Veri alınamadı");
-                        }
-                    },
-                    error: function() {
-                        $('#live-price').text("Hata");
+        // Detay göster/gizle fonksiyonu
+        document.addEventListener('DOMContentLoaded', function() {
+            const detailsBtn = document.getElementById('details-btn');
+            const detailsSection = document.getElementById('details-section');
+            if(detailsBtn && detailsSection) {
+                let isOpen = false;
+                detailsBtn.addEventListener('click', function() {
+                    isOpen = !isOpen;
+                    if(isOpen) {
+                        detailsSection.classList.add('open');
+                        detailsBtn.textContent = "Detay Gizle";
+                    } else {
+                        detailsSection.classList.remove('open');
+                        detailsBtn.textContent = "Detay Göster";
                     }
                 });
             }
-
-            function fetchSignals() {
-                $.ajax({
-                    url: "{% url 'signal-list' %}",
-                    dataType: 'json',
-                    success: function(data) {
-                        var tbody = $('#signals-table tbody');
-                        tbody.empty();  // Önceki verileri temizle
-
-                        data.forEach(function(signal) {
-                            var timeframeClass = '';
-                            if(signal.timeframe === 'Short') {
-                                timeframeClass = 'timeframe-short';
-                            } else if(signal.timeframe === 'Medium') {
-                                timeframeClass = 'timeframe-medium';
-                            } else if(signal.timeframe === 'Long') {
-                                timeframeClass = 'timeframe-long';
-                            }
-
-                            var row = `
-                                <tr>
-                                    <td>${signal.pair}</td>
-                                    <td>${signal.signal}</td>
-                                    <td class="${timeframeClass}">${signal.timeframe}</td>
-                                </tr>
-                            `;
-                            tbody.append(row);
-                        });
-                    },
-                    error: function() {
-                        console.error("Sinyaller alınamadı.");
-                    }
-                });
-            }
-
-            // İlk çağrı
-            fetchLivePrice();
-            fetchSignals();
-
-            // Her 5 saniyede bir canlı fiyatı güncelle
-            setInterval(fetchLivePrice, 5000);
-
-            // Her 15 saniyede bir sinyalleri güncelle
-            setInterval(fetchSignals, 15000);  // 15 saniye arayla sinyalleri güncelle
         });
     </script>
+    <footer class="footer">
+    <p>
+        <small>
+            Bu platformda sunulan sinyaller, analizler ve tahminler; gelişmiş indikatörler, makine öğrenmesi ve yapay zeka algoritmaları kullanılarak oluşturulmaktadır.  
+            Kripto para piyasaları yüksek volatiliteye sahip olup, ani fiyat dalgalanmalarına açıktır.  
+            Beklenmeyen ekonomik gelişmeler, jeopolitik olaylar, regülasyon değişiklikleri ve haber akışları, piyasa yönünde ani değişikliklere neden olabilir.  
+            Üretilen sinyaller geçmiş veriler ve istatistiksel modeller baz alınarak hazırlanmakta olup, **gelecekte kesinlik arz etmez**.  
+            Burada sunulan bilgiler, yalnızca genel bilgilendirme amaçlıdır ve **herhangi bir yatırım tavsiyesi niteliğinde değildir**.  
+            Tüm yatırım kararlarınızı kendi araştırmalarınıza, piyasa analizlerinize ve uzman görüşlerine dayanarak vermeniz tavsiye edilir.  
+            Bu platformun geliştiricileri ve operatörleri, doğabilecek herhangi bir mali kayıptan sorumlu tutulamaz.
+        </small>
+    </p>
+</footer>
 
+<style>
+    .footer {
+        text-align: center;
+        padding: 20px;
+        margin-top: 40px;
+        background-color: #f9f9f9;
+        border-top: 1px solid #ddd;
+        font-size: 0.85rem;
+        color: #666;
+    }
+    .footer small {
+        display: block;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+</style>
 </body>
 </html>
