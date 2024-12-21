@@ -1,0 +1,384 @@
+<!-- your_app/templates/trade_signal.html -->
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Trade Sinyali</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- TradingView -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f2f2f2;
+            margin: 0; 
+            padding: 0;
+            color: #333;
+        }
+        /* HEADER */
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #ccc;
+            padding: 0 20px;
+            height: 60px; /* Header yüksekliği */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header .header-left h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .header-right a {
+            text-decoration: none;
+            color: #008080;
+            font-weight: 500;
+        }
+        .header-right .welcome {
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        form label {
+            font-weight: 500;
+            color: #333;
+        }
+        .select2-container .select2-selection--single {
+            height: 40px !important;
+            border: 1px solid #008080 !important;
+            border-radius: 5px !important;
+            background: #ffffff !important;
+            display: flex;
+            align-items: center;
+        }
+        button {
+            background: #008080;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .info-text {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .info-text strong {
+            color: #008080;
+        }
+
+        /* Sinyal Tablosu */
+        .signals-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .signals-table th, .signals-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .signals-table th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        .signals-table tr:nth-child(even){background-color: #f9f9f9;}
+        .signals-table tr:hover {background-color: #f1f1f1;}
+        .timeframe-short {
+            color: #17a2b8;
+            font-weight: bold;
+        }
+        .timeframe-medium {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        .timeframe-long {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        /* TradingView */
+        .tv-chart-container {
+            background: #ffffff;
+            border: 1px solid #008080;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            height: 600px;
+        }
+        .tradingview-widget-container {
+            position: relative;
+            height: 100%;
+        }
+        #tradingview_chart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .legend {
+            display: flex;
+            gap: 10px;
+            align-items:center;
+            margin: 20px 0;
+        }
+
+        .legend span {
+            display:flex;
+            align-items:center;
+            gap:5px;
+            font-size:0.9rem;
+        }
+
+        /* Preloader */
+        #preloader {
+            display:none;
+            position: fixed;
+            top:0; left:0; 
+            width:100vw; 
+            height:100vh; 
+            background: rgba(255,255,255,0.8);
+            display:flex; 
+            flex-direction:column;
+            align-items:center; 
+            justify-content:center; 
+            z-index:9999;
+            color:#333;
+            font-weight:500;
+            font-size:1.1rem;
+        }
+        .spinner {
+            border: 6px solid #f3f3f3; 
+            border-top: 6px solid #008080; 
+            border-radius: 50%; 
+            width: 50px; 
+            height: 50px; 
+            animation: spin 1s linear infinite;
+            margin-bottom:10px;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <h1>Trade Sinyali & Analiz</h1>
+        </div>
+        <div class="header-right">
+            {% if user.is_authenticated %}
+                <span class="welcome">Merhaba, {{ user.username }}!</span>
+                <a href="{% url 'logout' %}">Çıkış</a>
+            {% else %}
+                <a href="{% url 'login' %}">Giriş Yap</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="spinner"></div>
+        Analiz yapılıyor, lütfen bekleyin...
+    </div>
+
+    <div class="container">
+        <!-- Parite Seçimi -->
+        <form method="get" action="">
+            <label for="pair">Parite Seç:</label>
+            <select name="pair" id="pair" style="width: 300px;">
+                {% for pair in pairs %}
+                    <option value="{{ pair }}" {% if pair == selected_pair %}selected{% endif %}>{{ pair }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Analiz Yap</button>
+        </form>
+
+        <!-- Canlı Fiyat / Seçili Parite Bilgisi -->
+        <div class="info-text">
+            <p><strong>Canlı Fiyat:</strong> <span id="live-price">{{ live_price }}</span></p>
+            <p>Seçili parite: <strong>{{ selected_pair }}</strong></p>
+        </div>
+
+        <!-- Sinyal Tablosu -->
+        <h2>Sinyaller</h2>
+        <table class="signals-table" id="signals-table">
+            <thead>
+                <tr>
+                    <th>Parite</th>
+                    <th>Sinyal</th>
+                    <th>Zaman Dilimi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sinyaller burada görüntülenecek -->
+            </tbody>
+        </table>
+
+        <!-- TradingView Grafiği -->
+        <div class="tv-chart-container tradingview-widget-container">
+            <div id="tradingview_chart"></div>
+        </div>
+        {% with symbol_upper=selected_pair|upper %}
+        {% with tv_symbol='BINANCE:'|add:symbol_upper %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                new TradingView.widget({
+                    "width": "100%",
+                    "height": "600",
+                    "symbol": "{{ tv_symbol }}",
+                    "interval": "60",
+                    "timezone": "Etc/UTC",
+                    "theme": "light",
+                    "style": "1",
+                    "locale": "tr",
+                    "toolbar_bg": "#f1f3f6",
+                    "enable_publishing": false,
+                    "allow_symbol_change": true,
+                    "hide_legend": false,
+                    "save_image": false,
+                    "container_id": "tradingview_chart"
+                });
+            });
+        </script>
+        {% endwith %}
+        {% endwith %}
+
+        <!-- Legend (açıklama) -->
+        <div class="legend">
+            <span><div class="legend-icon legend-buy" style="width:15px; height:15px; border-radius:50%; background:#28a745;"></div> Alım yönü</span>
+            <span><div class="legend-icon legend-sell" style="width:15px; height:15px; border-radius:50%; background:#dc3545;"></div> Satış yönü</span>
+            <span><div class="legend-icon legend-hold" style="width:15px; height:15px; border-radius:50%; background:#ffc107;"></div> Bekle</span>
+        </div>
+
+    </div>
+
+    <!-- JS Kütüphaneleri -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Parite arama kutusu
+            $('#pair').select2({
+                placeholder: "Parite Seç",
+                allowClear: true
+            });
+
+            // Form submit edilirken preloader aç
+            $('form').on('submit', function() {
+                $('#preloader').show();
+            });
+        });
+
+        // Sayfa tamamen yüklendiğinde preloader gizle
+        $(window).on('load', function(){
+            $('#preloader').hide();
+        });
+
+        // Canlı Fiyat ve Sinyal Güncelleme
+        document.addEventListener('DOMContentLoaded', function () {
+            var selectedPair = "{{ selected_pair }}";  // Seçili pariteyi JavaScript'e aktar
+
+            function fetchLivePrice() {
+                $.ajax({
+                    url: "{% url 'live-price' %}",
+                    data: {
+                        'symbol': selectedPair
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.price) {
+                            $('#live-price').text(data.price);
+                        } else if (data.error) {
+                            $('#live-price').text("Veri alınamadı");
+                        }
+                    },
+                    error: function() {
+                        $('#live-price').text("Hata");
+                    }
+                });
+            }
+
+            function fetchSignals() {
+                $.ajax({
+                    url: "{% url 'signal-list' %}",
+                    dataType: 'json',
+                    success: function(data) {
+                        var tbody = $('#signals-table tbody');
+                        tbody.empty();  // Önceki verileri temizle
+
+                        data.forEach(function(signal) {
+                            var timeframeClass = '';
+                            if(signal.timeframe === 'Short') {
+                                timeframeClass = 'timeframe-short';
+                            } else if(signal.timeframe === 'Medium') {
+                                timeframeClass = 'timeframe-medium';
+                            } else if(signal.timeframe === 'Long') {
+                                timeframeClass = 'timeframe-long';
+                            }
+
+                            var row = `
+                                <tr>
+                                    <td>${signal.pair}</td>
+                                    <td>${signal.signal}</td>
+                                    <td class="${timeframeClass}">${signal.timeframe}</td>
+                                </tr>
+                            `;
+                            tbody.append(row);
+                        });
+                    },
+                    error: function() {
+                        console.error("Sinyaller alınamadı.");
+                    }
+                });
+            }
+
+            // İlk çağrı
+            fetchLivePrice();
+            fetchSignals();
+
+            // Her 5 saniyede bir canlı fiyatı güncelle
+            setInterval(fetchLivePrice, 5000);
+
+            // Her 15 saniyede bir sinyalleri güncelle
+            setInterval(fetchSignals, 15000);  // 15 saniye arayla sinyalleri güncelle
+        });
+    </script>
+
+</body>
+</html>

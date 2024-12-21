@@ -1,0 +1,72 @@
+<!-- templates/logout.html -->
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Çıkış Yapıldı</title>
+  <!-- Google Font Örneği -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+    .logout-container {
+      width: 360px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 40px 30px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.8rem;
+      color: #dc3545;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    p {
+      font-size: 1rem;
+      margin-bottom: 30px;
+    }
+    .bottom-link a {
+      color: #008080;
+      font-weight: 500;
+      text-decoration: none;
+      font-size: 1rem;
+      padding: 10px 20px;
+      border: 1px solid #008080;
+      border-radius: 5px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .bottom-link a:hover {
+      background: #008080;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="logout-container">
+    <h1>Çıkış Yapıldı</h1>
+    <p>Başarıyla çıkış yaptınız. Tekrar giriş yapmak isterseniz aşağıdaki bağlantıya tıklayabilirsiniz.</p>
+
+    <div class="bottom-link">
+      <a href="{% url 'login' %}">Giriş Sayfasına Dön</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-#!/Users/tolgayilmaz/crypto_signals/venv/bin/python3
+#!/Users/tolgayilmaz/Documents/GitHub/crypto_signals/venv/bin/python3.13
 # -*- coding: utf-8 -*-
 import re
 import sys
