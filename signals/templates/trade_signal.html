@@ -270,9 +270,13 @@
         background-color: #f5f5f5;
     }
     .signal-badge {
-        padding: 6px 12px;
+        display: inline-block;
+        width: 80%;  /* Genişlik %80 */
+        text-align: center;
+        padding: 10px 0;
         border-radius: 5px;
         font-weight: bold;
+        color: white;
     }
     .buy {
         background-color: #28a745;
@@ -381,8 +385,6 @@
             <th>Parite</th>
             <th>Sinyal</th>
             <th>Zaman Dilimi</th>
-            <th>Sinyal Fiyatı</th>
-            <th>Hedef Fiyat</th>
             <th>Güncellenme Tarihi</th>
         </tr>
     </thead>
@@ -400,20 +402,6 @@
                 {% endif %}
             </td>
             <td>{{ signal.timeframe }}</td>
-            <td>
-                {% if signal.price_at_signal %}
-                    {{ signal.price_at_signal }}
-                {% else %}
-                    <span style="color: red;">Veri Yok</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if signal.target_price %}
-                    {{ signal.target_price }}
-                {% else %}
-                    <span style="color: red;">Veri Yok</span>
-                {% endif %}
-            </td>
             <td>{{ signal.updated_at|date:"d F Y, H:i" }}</td>
         </tr>
         {% empty %}

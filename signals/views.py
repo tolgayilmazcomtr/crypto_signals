@@ -8,28 +8,34 @@ from rest_framework.permissions import IsAuthenticated
 from .utils import (
     get_crypto_prices,
     get_live_price,
-    get_historical_prices,
     analyze_signals_advanced
 )
 from .models import Signal
 from .tasks import generate_signals
+from django.utils.timezone import localtime
 
 
+# Kripto Para Fiyatlarını Getiren API Endpoint
 class CryptoPricesAPIView(APIView):
     def get(self, request):
         prices = get_crypto_prices()
         return Response(prices)
 
 
+# Sinyal Analizi Yapan API Endpoint
 class CryptoSignalsAPIView(APIView):
     def get(self, request):
         symbol = request.GET.get('symbol', 'BTCUSDT')
-        analysis = analyze_signals_advanced(symbol)
-        if analysis.get("signal") is None:
-            return Response({"error": "Analiz yapılamadı"}, status=400)
-        return Response(analysis)
+        try:
+            analysis = analyze_signals_advanced(symbol)
+            if analysis.get("signal") is None:
+                raise ValueError("Analiz yapılamadı.")
+            return Response(analysis)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
 
 
+# Canlı Fiyatları Döndüren API Endpoint
 class LivePriceAPIView(APIView):
     def get(self, request):
         symbol = request.GET.get('symbol', 'BTCUSDT')
@@ -39,51 +45,22 @@ class LivePriceAPIView(APIView):
         return Response({"price": price})
 
 
+# Tüm Sinyalleri Listeleyen API Endpoint
 class SignalListAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        signals = Signal.objects.all().values('pair', 'signal', 'timeframe', 'updated_at')
-        return Response(list(signals))
+        signals = [
+            {
+                **signal,
+                'updated_at': localtime(signal['updated_at']).strftime('%d %B %Y, %H:%M')
+            }
+            for signal in Signal.objects.all().values('pair', 'signal', 'timeframe', 'updated_at')
+        ]
+        return Response(signals)
 
 
-@login_required
-def trade_signal_view(request):
-    # Binance'den parite listesi çek
-    prices = get_crypto_prices()
-    pairs = [price['symbol'] for price in prices if price['symbol'].endswith('USDT')]
-
-    selected_pair = request.GET.get('pair', 'BTCUSDT')
-    live_price = get_live_price(selected_pair)
-
-    # Seçilen parite için analiz yap
-    analysis = analyze_signals_advanced(selected_pair)
-    signal = analysis.get("signal", "Hold")
-    timeframe = analysis.get("timeframe", "Short")
-    comment = analysis.get("comment", "Analiz yapılamadı.")
-
-    # Mevcut sinyali veritabanında güncelle veya oluştur
-    Signal.objects.update_or_create(
-        pair=selected_pair,
-        defaults={
-            'signal': signal,
-            'timeframe': timeframe
-        }
-    )
-
-    # Tüm sinyalleri çek
-    signals = Signal.objects.all()
-
-    return render(request, 'trade_signal.html', {
-        'pairs': pairs,
-        'selected_pair': selected_pair,
-        'live_price': live_price or "Veri alınamadı",
-        'signal': signal,
-        'comment': comment,
-        'signals': signals,  # Tüm sinyalleri tabloya ekle
-    })
-
-
+# Kullanıcı Girişi Görünümü
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -97,14 +74,54 @@ def login_view(request):
             messages.error(request, "Kullanıcı adı veya şifre hatalı.")
             return redirect('login')
 
-    return render(request, 'login.html', {})
+    return render(request, 'login.html')
 
 
+# Kullanıcı Çıkışı Görünümü
 def logout_view(request):
     logout(request)
     messages.success(request, "Çıkış yapıldı.")
     return redirect('logout_done')
 
 
+# Çıkış Sonrası Görünüm
 def logout_done_view(request):
     return render(request, 'logout.html')
+
+
+# Sinyal Analizi Sayfası
+@login_required
+def trade_signal_view(request):
+    # Binance'den parite listesi çek
+    prices = get_crypto_prices()
+    pairs = [price['symbol'] for price in prices if price['symbol'].endswith('USDT')]
+
+    # Seçilen pariteyi al (Varsayılan: BTCUSDT)
+    selected_pair = request.GET.get('pair', 'BTCUSDT')
+    live_price = get_live_price(selected_pair)
+    analysis = analyze_signals_advanced(selected_pair)
+
+    # Sinyal analizi ve yorum
+    signal = analysis.get("signal", "Hold")
+    timeframe = analysis.get("timeframe", "Short")
+    comment = analysis.get("comment", "Analiz yapılamadı.")
+
+    # Sinyali veritabanında güncelle veya oluştur
+    Signal.objects.update_or_create(
+        pair=selected_pair,
+        defaults={
+            'signal': signal,
+            'timeframe': timeframe
+        }
+    )
+
+    # Tüm sinyalleri çek
+    signals = Signal.objects.all()
+    return render(request, 'trade_signal.html', {
+        'pairs': pairs,
+        'selected_pair': selected_pair,
+        'live_price': live_price or "Veri alınamadı",
+        'signal': signal,
+        'comment': comment,
+        'signals': signals,
+    })
