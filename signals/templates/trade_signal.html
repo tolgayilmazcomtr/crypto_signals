@@ -18,10 +18,11 @@
             margin: 0; 
             padding: 0;
             color: #ddd; /* Açık gri metin rengi */
+            background: radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%);
         }
         /* HEADER */
         header {
-            background: #1c1c1c; /* Koyu arka plan */
+            background: #0c1421; /* Koyu arka plan */
             border-bottom: 1px solid #444;
             padding: 0 20px;
             height: 60px; /* Header yüksekliği */
@@ -74,6 +75,10 @@
             background: #333 !important; /* Koyu arka plan */
             color: #fff; /* Beyaz metin */
         }
+        .select2-results { background-color: #1c1c1c; }
+        .select2-search input { background-color: #1c1c1c; }
+        .select2-search { background-color: #1c1c1c; }
+        .select2-container--default .select2-selection--single .select2-selection__rendered { color: #009f04; }
         button {
             background: #009f04; /* Yeşil arka plan */
             color: #fff;
@@ -266,7 +271,7 @@
             border-bottom: 1px solid #555;
             text-align: center;
 }
-        }
+        
         .signals-table tr:hover {
             background-color: #333;
         }
@@ -304,7 +309,7 @@
             overflow: hidden;
             white-space: nowrap;
             position: relative;
-            background-color: #1a1a1a;
+            background-color: #0c1421;
             padding: 10px 0;
         }
         .slider {
@@ -332,6 +337,47 @@
             from { transform: translateX(0%); }
             to { transform: translateX(-100%); }
         }
+.pair-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 30px;
+    border-bottom: 1px solid rgba(0, 255, 100, 0.2);
+    background: #051129;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.pair-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.pair-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #2b2b2b;
+    border: 2px solid #009f04;
+}
+
+.pair-name {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #00ff88;
+}
+
+.live-price {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+
     </style>
 </head>
 <body>
@@ -362,6 +408,7 @@
     </div>
 
     <div class="container">
+    
         <!-- Parite Seçimi -->
         <form method="get" action="">
             <label for="pair">Parite Seç:</label>
@@ -374,10 +421,15 @@
         </form>
 
         <!-- Canlı Fiyat / Seçili Parite Bilgisi -->
-        <div class="info-text">
-            <p><strong>Canlı Fiyat:</strong> <span id="live-price">{{ live_price }}</span></p>
-            <p>Seçili parite: <strong>{{ selected_pair }}</strong></p>
-        </div>
+<div class="pair-box">
+    <div class="pair-info">
+        <img src="https://www.binance.com/static/images/common/empty.svg" id="pair-icon" alt="Parite" class="pair-icon">
+        <span class="pair-name">{{ selected_pair }}</span>
+    </div>
+    <div class="live-price">
+        💹 <span id="live-price">{{ live_price }}</span>
+    </div>
+</div>
 
         <!-- Sinyal Kartı -->
         {% if signal == "Buy" %}
@@ -588,7 +640,36 @@
         const duplicate = slider.cloneNode(true);
         slider.parentNode.appendChild(duplicate);
     </script>
+<script>
+document.addEventListener('DOMContentLoaded', async function () {
+    const pair = "{{ selected_pair }}".replace('USDT', '').toLowerCase();
+    const pairIcon = document.getElementById('pair-icon');
 
+    try {
+        // CoinGecko'dan tüm kripto listesi çek
+        const response = await fetch('https://api.coingecko.com/api/v3/coins/list');
+        const coins = await response.json();
+        
+        // Pariteyi listeden bul
+        const coin = coins.find(c => c.symbol === pair);
+
+        if (coin) {
+            const coinData = await fetch(`https://api.coingecko.com/api/v3/coins/${coin.id}`);
+            const coinDetails = await coinData.json();
+            pairIcon.src = coinDetails.image.large;
+        } else {
+            // Parite bulunamazsa default class ekle
+            pairIcon.src = "https://cdn-icons-png.flaticon.com/512/1828/1828843.png";  // Placeholder ikon
+            pairIcon.classList.add('default-icon');
+        }
+    } catch (error) {
+        console.error("Parite resmi yüklenemedi", error);
+        pairIcon.src = "https://cdn-icons-png.flaticon.com/512/1828/1828843.png";  // Hata durumunda yedek ikon
+        pairIcon.classList.add('default-icon');
+    }
+});
+
+</script>
     <footer class="footer">
     <p>
         <small>
