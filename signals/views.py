@@ -90,10 +90,29 @@ class SignalListAPIView(APIView):
 def trade_signal_view(request):
     # Binance'den parite listesi çek
     prices = get_crypto_prices()
-    pairs = [price['symbol'] for price in prices if price['symbol'].endswith('USDT')]
 
+    # API yanıtının formatını kontrol et
+    if isinstance(prices, dict) and 'msg' in prices:
+        # API'den hata mesajı dönerse
+        return JsonResponse({'error': f"API hatası: {prices['msg']}"}, status=500)
+
+    if not isinstance(prices, list):
+        try:
+            # Yanıt string ise JSON formatına dönüştür
+            prices = json.loads(prices)
+        except (json.JSONDecodeError, TypeError):
+            # JSON'a dönüştürülemiyorsa hata döndür
+            return JsonResponse({'error': 'API yanıtı çözümlenemedi.'}, status=500)
+
+    # USDT ile biten pariteleri filtrele
+    pairs = [price['symbol'] for price in prices if isinstance(price, dict) and price.get('symbol', '').endswith('USDT')]
+
+    # Seçilen pariteyi belirle (Varsayılan BTCUSDT)
     selected_pair = request.GET.get('pair', 'BTCUSDT')
     live_price = get_live_price(selected_pair)
+
+    if live_price is None:
+        live_price = "Veri alınamadı"
 
     # Seçilen parite için analiz yap
     analysis = analyze_signals_advanced(selected_pair)
@@ -113,15 +132,15 @@ def trade_signal_view(request):
     # Tüm sinyalleri çek
     signals = Signal.objects.all().order_by('-updated_at')[:15]
 
+    # Frontend'e gönderilecek verileri render et
     return render(request, 'trade_signal.html', {
         'pairs': pairs,
         'selected_pair': selected_pair,
-        'live_price': live_price or "Veri alınamadı",
+        'live_price': live_price,
         'signal': signal,
         'comment': comment,
-        'signals': signals,  # Tüm sinyalleri tabloya ekle
+        'signals': signals,
     })
-
 
 def login_view(request):
     if request.method == 'POST':
