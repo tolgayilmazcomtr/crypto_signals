@@ -1,12 +1,13 @@
+<!-- templates/trade_signal.html -->
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>torypto kripto sinyal yakalama programı</title>
+    <title>Trade Sinyali</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 
     <!-- TradingView -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
@@ -14,15 +15,15 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: #121212; /* Siyah tonları */
+            background: #f2f2f2;
             margin: 0; 
             padding: 0;
-            color: #ddd; /* Açık gri metin rengi */
+            color: #333;
         }
         /* HEADER */
         header {
-            background: #1c1c1c; /* Koyu arka plan */
-            border-bottom: 1px solid #444;
+            background: #ffffff;
+            border-bottom: 1px solid #ccc;
             padding: 0 20px;
             height: 60px; /* Header yüksekliği */
             display: flex;
@@ -33,7 +34,7 @@
             margin: 0;
             font-size: 1.4rem;
             font-weight: 600;
-            color: #fff; /* Beyaz renk başlık için */
+            color: #333;
         }
         .header-right {
             display: flex;
@@ -42,11 +43,11 @@
         }
         .header-right a {
             text-decoration: none;
-            color: #009f04; /* Yeşil link rengi */
+            color: #008080;
             font-weight: 500;
         }
         .header-right .welcome {
-            color: #fff; /* Beyaz renk */
+            color: #333;
             font-weight: 500;
         }
 
@@ -65,18 +66,19 @@
         }
         form label {
             font-weight: 500;
-            color: #ddd; /* Açık gri metin rengi */
+            color: #333;
         }
         .select2-container .select2-selection--single {
             height: 40px !important;
-            border: 1px solid #009f04 !important; /* Yeşil sınır */
+            border: 1px solid #008080 !important;
             border-radius: 5px !important;
-            background: #333 !important; /* Koyu arka plan */
-            color: #fff; /* Beyaz metin */
+            background: #ffffff !important;
+            display: flex;
+            align-items: center;
         }
         button {
-            background: #009f04; /* Yeşil arka plan */
-            color: #fff;
+            background: #008080;
+            color: #ffffff;
             padding: 10px 20px;
             border-radius: 5px;
             border: none;
@@ -90,18 +92,18 @@
         .info-text {
             margin-bottom: 20px;
             line-height: 1.6;
-            background: #333; /* Koyu arka plan */
+            background: #fff;
             padding: 15px;
             border-radius: 5px;
-            border: 1px solid #444;
+            border: 1px solid #ddd;
         }
         .info-text strong {
-            color: #009f04; /* Yeşil metin rengi */
+            color: #008080;
         }
 
         .tv-chart-container {
-            background: #333; /* Koyu arka plan */
-            border: 1px solid #009f04;
+            background: #ffffff;
+            border: 1px solid #008080;
             border-radius: 5px;
             margin-bottom: 20px;
             height: 600px;
@@ -119,23 +121,23 @@
             padding: 20px;
             border-radius: 5px;
             margin-bottom: 20px;
-            color: #ddd; /* Açık gri metin rengi */
+            color: #333;
             position: relative;
-            background: #444; /* Koyu arka plan */
-            border:1px solid #555;
+            background: #fff;
+            border:1px solid #ddd;
         }
 
         .signal-buy {
-            border: 0px solid #28a745;
-            background: #004d00; /* Koyu yeşil arka plan */
+            border: 1px solid #28a745;
+            background: #e0f9e0;
         }
         .signal-sell {
-            border: 0px solid #dc3545;
-            background: #660000; /* Koyu kırmızı arka plan */
+            border: 1px solid #dc3545;
+            background: #fde0e0;
         }
         .signal-hold {
-            border: 0px solid #ffc107;
-            background: #4d4d00; /* Koyu sarı arka plan */
+            border: 1px solid #ffc107;
+            background: #fff7e0;
         }
 
         .signal-title {
@@ -186,7 +188,7 @@
         .details-toggle {
             background:none;
             border:none;
-            color:#009f04;
+            color:#008080;
             font-weight:500;
             cursor:pointer;
             padding:0;
@@ -214,7 +216,7 @@
 
         .details-section h3 {
             margin-top:0;
-            color:#fff;
+            color:#333;
             font-weight:600;
             margin-bottom:10px;
         }
@@ -226,19 +228,19 @@
             top:0; left:0; 
             width:100vw; 
             height:100vh; 
-            background: rgba(0,0,0,0.8); /* Siyah arka plan */
+            background: rgba(255,255,255,0.8);
             display:flex; 
             flex-direction:column;
             align-items:center; 
             justify-content:center; 
             z-index:9999;
-            color:#fff;
+            color:#333;
             font-weight:500;
             font-size:1.1rem;
         }
         .spinner {
             border: 6px solid #f3f3f3; 
-            border-top: 6px solid #009f04; 
+            border-top: 6px solid #008080; 
             border-radius: 50%; 
             width: 50px; 
             height: 50px; 
@@ -248,90 +250,46 @@
         @keyframes spin {
             100% { transform: rotate(360deg); }
         }
-
         .signals-table {
-            width: 100%;
-            border-collapse: collapse;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-        }
-        .signals-table th {
-            background-color: #009f04; /* Yeşil başlık */
-            color: white;
-            padding: 12px;
-        }
-        .signals-table td {
-            padding: 2px;
-            border-bottom: 1px solid #555;
-            text-align: center;
-}
-        }
-        .signals-table tr:hover {
-            background-color: #333;
-        }
-        .signal-badge {
-            display: inline-block;
-            width: 80%;  /* Genişlik %80 */
-            text-align: center;
-            padding: 10px 0;
-            border-radius: 5px;
-            font-weight: bold;
-            color: white;
-        }
-        .buy {
-            background-color: #28a745;
-            color: white;
-        }
-        .sell {
-            background-color: #dc3545;
-            color: white;
-        }
-        .hold {
-            background-color: #ffc107;
-            color: white;
-        }
-/* Orbitron fontunu eklemek için Google Fonts'tan çağırma */
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
-
-    .torypto {
-        font-family: 'Orbitron', sans-serif; /* Orbitron fontu */
-        font-size: 18px; /* Font büyüklüğü 18px */
-        color: white; /* Beyaz renk */
-        margin: 0;
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
-            .slider-container {
-            overflow: hidden;
-            white-space: nowrap;
-            position: relative;
-            background-color: #1a1a1a;
-            padding: 10px 0;
-        }
-        .slider {
-            display: inline-flex;
-            animation: slide 30s linear infinite;
-        }
-        .parite {
-            display: flex;
-            align-items: center;
-            margin: 0 20px;
-            color: white;
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-        }
-        .icon {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-        .buy { background-color: #28a745; }
-        .sell { background-color: #dc3545; }
-        .hold { background-color: #ffc107; }
-        @keyframes slide {
-            from { transform: translateX(0%); }
-            to { transform: translateX(-100%); }
-        }
+    .signals-table th {
+        background-color: #008080;
+        color: white;
+        padding: 12px;
+    }
+    .signals-table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+    .signals-table tr:hover {
+        background-color: #f5f5f5;
+    }
+    .signal-badge {
+        display: inline-block;
+        width: 80%;  /* Genişlik %80 */
+        text-align: center;
+        padding: 10px 0;
+        border-radius: 5px;
+        font-weight: bold;
+        color: white;
+    }
+    .buy {
+        background-color: #28a745;
+        color: white;
+    }
+    .sell {
+        background-color: #dc3545;
+        color: white;
+    }
+    .hold {
+        background-color: #ffc107;
+        color: white;
+    }
     </style>
 </head>
 <body>
@@ -339,8 +297,8 @@
     <!-- HEADER -->
     <header>
         <div class="header-left">
-    <h1 class="torypto">torypto</h1>
-</div>
+            <h1>Trade Sinyali & Analiz</h1>
+        </div>
         <div class="header-right">
             {% if user.is_authenticated %}
                 <span class="welcome">Merhaba, {{ user.username }}!</span>
@@ -350,11 +308,7 @@
             {% endif %}
         </div>
     </header>
-    <div class="slider-container">
-        <div class="slider" id="slider">
-            <!-- Parite Verileri -->
-        </div>
-    </div>
+
     <!-- Preloader -->
     <div id="preloader">
         <div class="spinner"></div>
@@ -365,7 +319,7 @@
         <!-- Parite Seçimi -->
         <form method="get" action="">
             <label for="pair">Parite Seç:</label>
-            <select name="pair" id="pair" style="width: 300px;     background-color: #000;">
+            <select name="pair" id="pair" style="width: 300px;">
                 {% for pair in pairs %}
                     <option value="{{ pair }}" {% if pair == selected_pair %}selected{% endif %}>{{ pair }}</option>
                 {% endfor %}
@@ -423,13 +377,8 @@
             </div>
         </div>
         {% endif %}
-        <!-- Legend (açıklama) -->
-        <div class="legend">
-            <span><div class="legend-icon legend-buy"></div> Alım yönü</span>
-            <span><div class="legend-icon legend-sell"></div> Satış yönü</span>
-            <span><div class="legend-icon legend-hold"></div> Bekle</span>
-        </div>
-<h3>Sinyal Listesi</h3><span>Son 15 parite görüntülenmektedir.</span>
+
+<h2>Sinyal Listesi</h2>
 <table class="signals-table">
     <thead>
         <tr>
@@ -439,29 +388,28 @@
             <th>Güncellenme Tarihi</th>
         </tr>
     </thead>
-   <tbody>
-    {% for signal in signals %}
-    <tr {% if signal.pair == selected_pair %} style="background-color: #333;" {% endif %}>
-        <td>{{ signal.pair }}</td>
-        <td class="signal-{{ signal.signal|lower }}">
-            {% if signal.signal == 'Buy' %}
-                <span class="signal-badge buy">Al</span>
-            {% elif signal.signal == 'Sell' %}
-                <span class="signal-badge sell">Sat</span>
-            {% else %}
-                <span class="signal-badge hold">Bekle</span>
-            {% endif %}
-        </td>
-        <td>{{ signal.timeframe }}</td>
-        <td>{{ signal.updated_at|date:"d F Y, H:i" }}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="6">Henüz sinyal yok.</td>
-    </tr>
-    {% endfor %}
-</tbody>
-
+    <tbody>
+        {% for signal in signals %}
+        <tr {% if signal.pair == selected_pair %} style="background-color: #e6f7ff;" {% endif %}>
+            <td>{{ signal.pair }}</td>
+            <td class="signal-{{ signal.signal|lower }}">
+                {% if signal.signal == 'Buy' %}
+                    <span class="signal-badge buy">Al</span>
+                {% elif signal.signal == 'Sell' %}
+                    <span class="signal-badge sell">Sat</span>
+                {% else %}
+                    <span class="signal-badge hold">Bekle</span>
+                {% endif %}
+            </td>
+            <td>{{ signal.timeframe }}</td>
+            <td>{{ signal.updated_at|date:"d F Y, H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Henüz sinyal yok.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 
         <!-- TradingView Grafiği -->
@@ -479,10 +427,10 @@
                     "symbol": "{{ tv_symbol }}",
                     "interval": "60",
                     "timezone": "Etc/UTC",
-                    "theme": "dark", /* Dark tema */
+                    "theme": "light",
                     "style": "1",
                     "locale": "tr",
-                    "toolbar_bg": "#121212", /* Koyu arka plan */
+                    "toolbar_bg": "#f1f3f6",
                     "enable_publishing": false,
                     "allow_symbol_change": true,
                     "hide_legend": false,
@@ -493,6 +441,13 @@
         </script>
         {% endwith %}
         {% endwith %}
+
+        <!-- Legend (açıklama) -->
+        <div class="legend">
+            <span><div class="legend-icon legend-buy"></div> Alım yönü</span>
+            <span><div class="legend-icon legend-sell"></div> Satış yönü</span>
+            <span><div class="legend-icon legend-hold"></div> Bekle</span>
+        </div>
 
     </div>
 
@@ -538,57 +493,6 @@
             }
         });
     </script>
-        <script>
-        function updateSignal(pair) {
-            fetch(`/api/update-signal/?pair=${pair}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(`${pair} için sinyal güncellendi.`);
-                        location.reload();
-                    } else {
-                        alert(`Güncelleme başarısız: ${data.error}`);
-                    }
-                })
-                .catch(error => {
-                    console.error('Güncelleme hatası:', error);
-                    alert('Bağlantı hatası.');
-                });
-        }
-    </script>
-    <script>
-        const pariteRows = Array.from(document.querySelectorAll('.signals-table tbody tr'));
-        const slider = document.getElementById('slider');
-        
-        // En güncel 15 pariteyi seçme
-        const sortedRows = pariteRows.sort((a, b) => {
-            const dateA = new Date(a.cells[3].textContent);
-            const dateB = new Date(b.cells[3].textContent);
-            return dateB - dateA; // Tarihe göre azalan sırala
-        }).slice(0, 20); // Son 15 pariteyi al
-        
-        sortedRows.forEach(row => {
-            const parite = row.cells[0].textContent;
-            const sinyalClass = row.cells[1].querySelector('span').classList;
-            let colorClass = 'sell';
-            
-            if (sinyalClass.contains('buy')) {
-                colorClass = 'buy';
-            } else if (sinyalClass.contains('hold')) {
-                colorClass = 'hold';
-            }
-            
-            const pariteItem = document.createElement('div');
-            pariteItem.classList.add('parite');
-            pariteItem.innerHTML = `<div class="icon ${colorClass}"></div>${parite}`;
-            slider.appendChild(pariteItem);
-        });
-
-        // Döngü ekle - boşluk olmaması için
-        const duplicate = slider.cloneNode(true);
-        slider.parentNode.appendChild(duplicate);
-    </script>
-
     <footer class="footer">
     <p>
         <small>
@@ -608,10 +512,10 @@
         text-align: center;
         padding: 20px;
         margin-top: 40px;
-        background-color: #333; /* Koyu arka plan */
-        border-top: 1px solid #444;
+        background-color: #f9f9f9;
+        border-top: 1px solid #ddd;
         font-size: 0.85rem;
-        color: #ddd; /* Açık gri metin */
+        color: #666;
     }
     .footer small {
         display: block;
