@@ -9,7 +9,7 @@ from .utils import (
     get_crypto_prices,
     get_live_price,
     get_historical_prices,
-    analyze_signals_advanced
+    analyze_signals_advanced,
 )
 from .models import Signal
 from .tasks import generate_signals
