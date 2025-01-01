@@ -5,33 +5,212 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Torypto | Premium'a Yükselt</title>
     
-    <!-- Fontlar ve stiller register.html'den alınacak -->
-    
+    <!-- Fontlar -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6a;
+            --secondary: #7000ff;
+            --bg-dark: #0a0b0e;
+            --bg-card: #151720;
+            --text-primary: #ffffff;
+            --text-secondary: #8a8d93;
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --gradient: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .upgrade-container {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .premium-features {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            color: var(--primary);
+        }
+
+        .price-section {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .old-price {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: line-through;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .price {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .price-period {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 1rem;
+            right: -2rem;
+            background: var(--primary);
+            color: var(--bg-dark);
+            padding: 0.3rem 3rem;
+            transform: rotate(45deg);
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 10px rgba(0,255,136,0.3);
+        }
+
+        .payment-form {
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--gradient);
+            color: var(--bg-dark);
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+    </style>
 </head>
 <body>
-    <div class="reset-container">
+    <div class="upgrade-container">
         <div class="logo">TORYPTO</div>
-
-        <div class="package-info">
-            <h3>Premium Paket</h3>
-            <div class="package-features">
-                <li>Tüm pariteleri takip edin</li>
+        
+        <div class="premium-features">
+            <h3>Premium Paket Özellikleri</h3>
+            <ul class="feature-list">
+                <li>Tüm kripto paritelere erişim</li>
                 <li>Gelişmiş teknik analiz göstergeleri</li>
-                <li>Gerçek zamanlı fiyat ve hacim takibi</li>
-                <li>Sınırsız sinyal</li>
-                <li>Email ve Telegram bildirimleri</li>
+                <li>Gerçek zamanlı sinyal takibi</li>
+                <li>Telegram bildirimleri</li>
                 <li>7/24 öncelikli destek</li>
-            </div>
+            </ul>
         </div>
 
-        <form method="POST">
+        <div class="price-section">
+            <div class="old-price">899₺</div>
+            <div class="price">399₺</div>
+            <div class="price-period">yıllık</div>
+            <div class="discount-badge">%56 İndirim</div>
+        </div>
+
+        <form class="payment-form" method="POST" action="{% url 'signals:process-payment' %}">
             {% csrf_token %}
-            <button type="submit" class="btn">Premium'a Yükselt</button>
+            <button type="submit" class="btn">Ödeme Yap</button>
         </form>
 
-        <div class="links">
-            <a href="{% url 'signals:trade-signal' %}">Ana Sayfaya Dön</a>
-        </div>
+        <a href="{% url 'signals:trade-signal' %}" class="back-link">Ana Sayfaya Dön</a>
     </div>
 </body>
 </html> 

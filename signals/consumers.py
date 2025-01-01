@@ -4,27 +4,30 @@ import websockets
 import aiohttp
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .utils import convert_symbol_to_coingecko_id
+from .models import CryptoPair
 
 class PriceConsumer(AsyncWebsocketConsumer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.session = None  # aiohttp session'ı için
+        self.cache = {}  # Fiyat önbelleği ekleyelim
+        
     async def connect(self):
         self.symbol = None
         self.should_update = True
-        self.current_source = 'binance'  # Varsayılan kaynak
-        self.binance_socket = None
+        self.session = aiohttp.ClientSession()  # Tek bir session oluştur
         await self.accept()
 
     async def disconnect(self, close_code):
         self.should_update = False
-        if self.binance_socket:
-            await self.binance_socket.close()
+        if self.session:
+            await self.session.close()  # Session'ı kapat
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         if data['type'] == 'subscribe':
-            if self.symbol:  # Eğer önceki bir abonelik varsa iptal et
+            if self.symbol:  # Önceki aboneliği iptal et
                 self.should_update = False
-                if self.binance_socket:
-                    await self.binance_socket.close()
             
             self.symbol = data['symbol']
             self.should_update = True
@@ -32,73 +35,37 @@ class PriceConsumer(AsyncWebsocketConsumer):
         elif data['type'] == 'unsubscribe':
             self.should_update = False
 
-    async def binance_price_stream(self):
-        url = f"wss://stream.binance.com:9443/ws/{self.symbol.lower()}@ticker"
-        try:
-            async with websockets.connect(url) as ws:
-                self.binance_socket = ws
-                message = await ws.recv()
-                data = json.loads(message)
-                return float(data['c'])  # Güncel fiyat
-        except Exception as e:
-            print(f"Binance WebSocket Error: {e}")
-            return None
-
-    async def coingecko_price_stream(self):
-        try:
-            coin_id = convert_symbol_to_coingecko_id(self.symbol)
-            url = "https://api.coingecko.com/api/v3/simple/price"
-            
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, params={
-                    'ids': coin_id,
-                    'vs_currencies': 'usd'
-                }) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        return float(data[coin_id]['usd'])
-            return None
-        except Exception as e:
-            print(f"CoinGecko API Error: {e}")
-            return None
-
-    async def switch_source(self):
-        print(f"Switching source from {self.current_source}")
-        if self.current_source == 'binance':
-            self.current_source = 'coingecko'
-        else:
-            self.current_source = 'binance'
-        print(f"to {self.current_source}")
-
-    async def get_price(self):
-        try:
-            if self.current_source == 'binance':
-                price = await self.binance_price_stream()
-            else:
-                price = await self.coingecko_price_stream()
-
-            if price is None:
-                await self.switch_source()
-                return await self.get_price()
-            return price
-        except Exception as e:
-            print(f"Price fetch error: {e}")
-            await self.switch_source()
-            return await self.get_price()
-
     async def price_stream(self):
         while self.should_update:
             try:
-                price = await self.get_price()
+                price = await self.get_binance_price()
                 if price:
                     await self.send(json.dumps({
                         'type': 'price_update',
-                        'data': {
-                            self.symbol: price,
-                            'source': self.current_source
-                        }
+                        'data': {self.symbol: price}
                     }))
-                await asyncio.sleep(1)  # 1 saniye bekle
+                await asyncio.sleep(1)
             except Exception as e:
                 print(f"Stream Error: {e}")
-                await asyncio.sleep(5)  # Hata durumunda 5 saniye bekle 
+                await asyncio.sleep(5)
+
+    async def get_binance_price(self):
+        try:
+            # Önbellekte varsa ve 1 saniyeden yeni ise, önbellekten döndür
+            if self.symbol in self.cache:
+                timestamp, price = self.cache[self.symbol]
+                if (asyncio.get_event_loop().time() - timestamp) < 1:
+                    return price
+
+            url = f"https://api.binance.com/api/v3/ticker/price?symbol={self.symbol}"
+            async with self.session.get(url) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    price = float(data['price'])
+                    # Önbelleğe al
+                    self.cache[self.symbol] = (asyncio.get_event_loop().time(), price)
+                    return price
+            return None
+        except Exception as e:
+            print(f"Binance API Error: {e}")
+            return None 

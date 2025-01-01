@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torypto | Ödeme Başarılı</title>
+    
+    <!-- Fontlar -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* Diğer stiller aynı */
+        .success-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="upgrade-container">
+        <div class="logo">TORYPTO</div>
+        
+        <div class="success-icon">✓</div>
+        
+        <h2>Ödemeniz Başarıyla Tamamlandı!</h2>
+        <p>Premium hesabınız aktif edildi.</p>
+        
+        <a href="{% url 'signals:trade-signal' %}" class="btn">Ana Sayfaya Dön</a>
+    </div>
+</body>
+</html> 

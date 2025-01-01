@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -182,3 +183,23 @@ EMAIL_USE_TLS = False  # SSL kullanıyoruz, TLS değil
 EMAIL_HOST_USER = 'info@torypto.com'
 EMAIL_HOST_PASSWORD = '8n|sw?!tJB'
 DEFAULT_FROM_EMAIL = 'info@torypto.com'  # Gönderen e-posta adresi
+
+# WooCommerce Settings
+WOOCOMMERCE_URL = os.getenv('WOOCOMMERCE_URL', 'https://torypto.com')
+WOOCOMMERCE_CONSUMER_KEY = os.getenv('WOOCOMMERCE_CONSUMER_KEY', 'ck_1e2857952369d100f82c8e03a3d46267630155d8')
+WOOCOMMERCE_CONSUMER_SECRET = os.getenv('WOOCOMMERCE_CONSUMER_SECRET', 'cs_64f9c3a91ad71d59e638d28f02c6e7a5b0195506')
+PREMIUM_PRODUCT_ID = int(os.getenv('PREMIUM_PRODUCT_ID', '62'))
+
+# WooCommerce Page IDs
+WOOCOMMERCE_CART_PAGE_ID = 8
+WOOCOMMERCE_CHECKOUT_PAGE_ID = 9
+WOOCOMMERCE_MYACCOUNT_PAGE_ID = 10
+WOOCOMMERCE_THANKYOU_PAGE_ID = 11  # Teşekkürler sayfası ID'si
+
+# WooCommerce Endpoints
+WOOCOMMERCE_ORDER_PAY_ENDPOINT = 'order-pay'
+WOOCOMMERCE_ORDER_RECEIVED_ENDPOINT = 'tesekkurler'
+WOOCOMMERCE_ADD_PAYMENT_METHOD_ENDPOINT = 'odeme-ekle'
+
+# WooCommerce Webhook Settings
+WOOCOMMERCE_WEBHOOK_SECRET = os.getenv('WOOCOMMERCE_WEBHOOK_SECRET', 'torypto_webhook_2024_secure_key_!@#')

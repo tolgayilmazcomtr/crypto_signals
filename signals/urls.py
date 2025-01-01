@@ -18,4 +18,7 @@ urlpatterns = [
          views.CustomPasswordResetConfirmView.as_view(),
          name='password_reset_confirm'),
     path('upgrade/', views.upgrade_to_premium, name='upgrade'),
+    path('process-payment/', views.process_payment, name='process-payment'),
+    path('wc-webhook/', views.woocommerce_webhook, name='wc-webhook'),
+    path('payment-success/', views.payment_success_view, name='payment-success'),
 ]

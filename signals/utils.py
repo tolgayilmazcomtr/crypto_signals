@@ -9,6 +9,10 @@ from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from urllib.parse import urlparse
 from django.conf import settings
+from .models import CryptoPair  # Bu satırı ekleyelim
+import aiohttp
+import asyncio
+from decimal import Decimal
 
 # CoinGecko API endpoint'leri
 COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3"
@@ -649,48 +653,58 @@ def download_pair_icon(pair_id, icon_url):
         print(f"İkon indirme hatası ({pair_id}): {str(e)}")
     return None
 
-def update_crypto_pairs():
-    """CoinGecko'dan parite verilerini güncelle"""
+async def update_single_pair(session, coin):
     try:
-        url = f"{COINGECKO_BASE_URL}/coins/markets"
-        params = {
-            'vs_currency': 'usd',
-            'order': 'market_cap_desc',
-            'per_page': 100,
-            'sparkline': False
-        }
+        # Sadece BTC ve ETH için güncelleme yap
+        if coin['symbol'].upper() not in ['BTC', 'ETH']:
+            return None
+            
+        symbol = f"{coin['symbol'].upper()}USDT"
         
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        
-        pairs_data = response.json()
-        
-        for pair_data in pairs_data:
-            try:
-                # İkonu indir
-                icon_path = download_pair_icon(pair_data['id'], pair_data['image'])
-                
-                # Paritenin USDT sembolünü oluştur
-                symbol = f"{pair_data['symbol'].upper()}USDT"
-                
-                # Paritenin veritabanı kaydını güncelle
-                CryptoPair.objects.update_or_create(
-                    symbol=symbol,
-                    defaults={
-                        'name': pair_data['name'],
-                        'icon': icon_path,
-                        'market_cap': pair_data['market_cap'],
-                        'last_price': pair_data['current_price']
-                    }
-                )
-            except Exception as e:
-                print(f"Parite güncelleme hatası ({pair_data['id']}): {str(e)}")
-                continue
-        
-        return True
+        # Veritabanında güncelle veya oluştur
+        pair, created = await sync_to_async(CryptoPair.objects.update_or_create)(
+            symbol=symbol,
+            defaults={
+                'name': coin['name'],
+                'market_cap': Decimal(str(coin['market_cap'])),
+                'last_price': Decimal(str(coin['current_price']))
+            }
+        )
+        return pair
     except Exception as e:
-        print(f"Beklenmeyen hata: {e}")
-        return False
+        print(f"Parite güncelleme hatası ({coin['id']}): {str(e)}")
+        return None
+
+async def update_crypto_pairs_async():
+    url = "https://api.coingecko.com/api/v3/coins/markets"
+    params = {
+        'vs_currency': 'usd',
+        'order': 'market_cap_desc',
+        'per_page': 100,
+        'sparkline': False
+    }
+    
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(url, params=params) as response:
+                if response.status == 200:
+                    coins = await response.json()
+                    
+                    # Paralel güncelleme işlemleri
+                    tasks = [update_single_pair(session, coin) for coin in coins]
+                    await asyncio.gather(*tasks)
+                    return True
+                    
+        except Exception as e:
+            print(f"CoinGecko API hatası: {str(e)}")
+            return False
+
+def update_crypto_pairs():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    success = loop.run_until_complete(update_crypto_pairs_async())
+    loop.close()
+    return success
 
 def get_binance_historical_prices(symbol, interval='1h', limit=200):
     """Binance'den geçmiş fiyat verilerini çeker"""

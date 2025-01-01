@@ -908,7 +908,7 @@
 
         @media (max-width: 768px) {
             .table-container {
-                margin: 0;
+        margin: 0;
                 border-radius: 0;
                 border-left: none;
                 border-right: none;
@@ -946,7 +946,7 @@
             .signals-table th,
             .signals-table td {
                 padding: 0.75rem;
-                white-space: nowrap;
+            white-space: nowrap;
             }
 
             /* Mobilde sütun genişliklerini ayarla */
@@ -1042,9 +1042,9 @@
             color: var(--text-primary);
             font-size: 0.95rem;
             cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
             transition: all 0.3s ease;
         }
 
@@ -1054,7 +1054,7 @@
 
         .timeframe-content {
             background: rgba(255, 255, 255, 0.02);
-            border-radius: 8px;
+    border-radius: 8px;
             padding: 1.5rem;
             margin-top: 1rem;
             font-size: 0.9rem;
@@ -1067,8 +1067,8 @@
             border-radius: 6px;
             font-weight: 500;
             font-size: 0.9rem;
-            display: flex;
-            align-items: center;
+    display: flex;
+    align-items: center;
             gap: 0.5rem;
         }
 
@@ -1124,9 +1124,9 @@
 
         .detailed-comment li {
             margin-bottom: 0.5rem;
-        }
+}
 
-        .pair-icon {
+.pair-icon {
             width: 24px;
             height: 24px;
             margin-right: 8px;
@@ -1181,7 +1181,7 @@
 
             .main-content {
                 padding: 1rem;
-                margin-top: 60px;
+                margin-top: 105px;
             }
 
             .pair-selector {
@@ -1469,6 +1469,68 @@
                 margin-bottom: 0.5rem;
             }
         }
+
+        .btn-premium {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: var(--bg-dark);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: pulse 2s infinite;
+            text-decoration: none;
+        }
+
+        .premium-icon {
+            font-size: 1.2em;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Ücretsiz kullanıcı uyarısı */
+        .free-user-notice {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #FFD700;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .free-user-notice .icon {
+            font-size: 1.5rem;
+        }
+
+        .free-user-notice .message {
+            flex: 1;
+            color: var(--text-secondary);
+        }
+
+        .free-user-notice .upgrade-btn {
+            white-space: nowrap;
+        }
+
+        .premium-badge {
+            background: var(--gradient);
+            color: var(--bg-dark);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 8px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -1478,11 +1540,18 @@
             <a href="{% url 'signals:trade-signal' %}" class="logo">TORYPTO</a>
             <div class="user-menu">
                 {% if user.is_authenticated %}
+                    <span class="welcome">
+                        {{ user.username }}
+                        {% if user.package == 'premium' %}
+                            <span class="premium-badge">Premium</span>
+                        {% endif %}
+                    </span>
                     <div class="hamburger-menu">
                         <div class="hamburger-icon"></div>
                     </div>
                     <div class="mobile-menu">
                         <span class="welcome">{{ user.username }}</span>
+
                         <a href="{% url 'signals:logout' %}" class="btn">Çıkış</a>
                     </div>
                 {% else %}
@@ -1502,18 +1571,44 @@
     <main class="main-content">
         <!-- Pair Selector -->
         <div class="pair-selector">
+            {% if user.package == 'free' %}
+                <div class="free-user-notice">
+                    <span class="icon">💎</span>
+                    <div class="message">
+                        <strong>Ücretsiz hesap kullanıyorsunuz.</strong><br>
+                        Premium hesaba geçerek tüm paritelere erişim sağlayın!
+                    </div>
+                    <a href="{% url 'signals:upgrade' %}" class="btn btn-premium upgrade-btn"><span class="premium-icon">⭐</span> Premium'a Geç</a>
+                </div>
+            {% endif %}
+            
             <form method="get" action="{% url 'signals:trade-signal' %}" id="analyzeForm">
                 <div class="form-row">
                     <select name="pair" id="pair">
-                        {% for pair in pairs %}
-                            <option value="{{ pair.symbol }}" 
-                                    {% if pair.symbol == selected_pair %}selected{% endif %}
-                                    data-icon="{{ pair.icon.url }}">
-                                {{ pair.name }} ({{ pair.symbol }})
-                            </option>
-                        {% endfor %}
+                        {% if user.package == 'free' %}
+                            {% for pair in pairs %}
+                                {% if pair.symbol == 'BTCUSDT' or pair.symbol == 'ETHUSDT' %}
+                                    <option value="{{ pair.symbol }}" 
+                                            {% if pair.symbol == selected_pair %}selected{% endif %}
+                                            data-icon="{{ pair.icon.url }}">
+                                        {{ pair.name }} ({{ pair.symbol }})
+                                    </option>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            {% for pair in pairs %}
+                                <option value="{{ pair.symbol }}" 
+                                        {% if pair.symbol == selected_pair %}selected{% endif %}
+                                        data-icon="{{ pair.icon.url }}">
+                                    {{ pair.name }} ({{ pair.symbol }})
+                                </option>
+                            {% endfor %}
+                        {% endif %}
                     </select>
-                    <button type="submit" class="btn">Analiz Yap</button>
+                    <button type="submit" class="btn btn-primary" id="analyzeBtn">
+                        <span class="btn-text">Analiz Yap</span>
+                        <div class="btn-loader" style="display: none;"></div>
+                    </button>
                 </div>
             </form>
         </div>
@@ -1596,32 +1691,32 @@
                     </thead>
                     <tbody>
                         {% for signal in signals %}
-                        <tr>
-                            <td>
-                                <div class="pair-cell">
-                                    <img src="{{ signal.pair_icon }}" alt="{{ signal.pair }}">
-                                    <span>{{ signal.pair }}</span>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="analysis-signal {{ signal.signal|lower }}">
-                                    {% if signal.signal == "Buy" %}AL
-                                    {% elif signal.signal == "Sell" %}SAT
-                                    {% else %}BEKLE{% endif %}
-                                </span>
-                            </td>
-                            <td>${{ signal.price_at_signal|floatformat:2 }}</td>
-                            <td>{{ signal.updated_at|timesince }} önce</td>
-                        </tr>
+                            <tr>
+                                <td>
+                                    <div class="pair-cell">
+                                        <img src="{{ signal.pair_icon }}" alt="{{ signal.pair }}">
+                                        <span>{{ signal.pair }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="analysis-signal {{ signal.signal|lower }}">
+                                        {% if signal.signal == "Buy" %}AL
+                                        {% elif signal.signal == "Sell" %}SAT
+                                        {% else %}BEKLE{% endif %}
+                                    </span>
+                                </td>
+                                <td>${{ signal.price_at_signal|floatformat:2 }}</td>
+                                <td>{{ signal.updated_at|timesince }} önce</td>
+                            </tr>
                         {% empty %}
-                        <tr>
-                            <td colspan="4" class="empty-state">
-                                <div class="empty-message">
-                                    <span>📈</span>
-                                    <p>Henüz sinyal geçmişi bulunmuyor</p>
-                                </div>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="4" class="empty-state">
+                                    <div class="empty-message">
+                                        <span>📈</span>
+                                        <p>Henüz sinyal geçmişi bulunmuyor</p>
+                                    </div>
+                                </td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -1648,121 +1743,19 @@
 
     <script>
         $(document).ready(function() {
-            // Select2 Initialization
+            // Select2 başlatma
             $('#pair').select2({
-                templateResult: formatPairOption,
-                templateSelection: formatPairOption,
-                escapeMarkup: function(m) { return m; }
+                templateResult: formatPair,
+                templateSelection: formatPair
             });
 
-            // Pair Format Function with Price
-            function formatPairOption(pair) {
+            function formatPair(pair) {
                 if (!pair.id) return pair.text;
-                var icon = $(pair.element).data('icon');
-                if(!icon) {
-                    // Varsayılan ikon yolu
-                    icon = '/media/pair_icons/default-coin.png';
-                }
-                return $('<span><img src="' + icon + '" class="pair-icon" onerror="this.src=\'/media/pair_icons/default-coin.png\'" /> ' + pair.text + '</span>');
+                var $pair = $(
+                    '<span><img src="' + $(pair.element).data('icon') + '" class="pair-icon" /> ' + pair.text + '</span>'
+                );
+                return $pair;
             }
-
-            // WebSocket bağlantısı
-            let ws;
-            let selectedPair = '{{ selected_pair }}';
-            let reconnectAttempts = 0;
-            const maxReconnectAttempts = 5;
-
-            function connectWebSocket() {
-                // WebSocket protokolünü otomatik belirle
-                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const ws = new WebSocket(`${protocol}//${window.location.host}/ws/prices/`);
-
-                ws.onopen = function() {
-                    console.log('WebSocket bağlantısı kuruldu');
-                    reconnectAttempts = 0;
-                    
-                    // Seçili pariteye abone ol
-                    ws.send(JSON.stringify({
-                        'type': 'subscribe',
-                        'symbol': selectedPair
-                    }));
-                };
-
-                ws.onmessage = function(e) {
-                    const data = JSON.parse(e.data);
-                    if (data.type === 'price_update' && data.data[selectedPair]) {
-                        updatePrice(data.data[selectedPair]);
-                        // Kaynak bilgisini göster
-                        console.log(`Fiyat kaynağı: ${data.data.source}`);
-                    }
-                };
-
-                ws.onclose = function() {
-                    console.log('WebSocket bağlantısı kapandı');
-                    if (reconnectAttempts < maxReconnectAttempts) {
-                        reconnectAttempts++;
-                        console.log(`Yeniden bağlanılıyor... (${reconnectAttempts}/${maxReconnectAttempts})`);
-                        setTimeout(connectWebSocket, 3000);
-                    }
-                };
-
-                ws.onerror = function(err) {
-                    console.error('WebSocket hatası:', err);
-                };
-
-                return ws;
-            }
-
-            // İlk bağlantıyı kur
-            connectWebSocket();
-
-            // Fiyat güncelleme fonksiyonu
-            function updatePrice(newPrice) {
-                const priceElement = $('#livePriceValue');
-                const oldPrice = parseFloat(priceElement.text().replace('$', ''));
-                newPrice = parseFloat(newPrice);
-                
-                if (isNaN(oldPrice)) {
-                    priceElement.text('$' + newPrice.toFixed(2));
-                    return;
-                }
-                
-                // Fiyat değişimini animasyonlu göster
-                priceElement.css('color', newPrice > oldPrice ? 'var(--success)' : 'var(--danger)');
-                priceElement.text('$' + newPrice.toFixed(2));
-                
-                // 1 saniye sonra rengi normale döndür
-                setTimeout(() => priceElement.css('color', 'var(--text-primary)'), 1000);
-
-                // Yüzde değişimi
-                const change = ((newPrice - oldPrice) / oldPrice * 100);
-                const changeText = change > 0 ? 
-                    `↑ +${change.toFixed(2)}%` : 
-                    `↓ ${change.toFixed(2)}%`;
-                
-                $('#priceChange')
-                    .attr('class', `price-change ${change > 0 ? 'positive' : 'negative'}`)
-                    .text(changeText)
-                    .fadeIn(200);
-            }
-
-            // Parite değiştiğinde
-            $('#pair').on('change', function() {
-                if (ws && ws.readyState === WebSocket.OPEN) {
-                    // Eski pariteyi unsubscribe
-                    ws.send(JSON.stringify({
-                        'type': 'unsubscribe',
-                        'symbol': selectedPair
-                    }));
-                    
-                    // Yeni pariteye subscribe
-                    selectedPair = $(this).val();
-                    ws.send(JSON.stringify({
-                        'type': 'subscribe',
-                        'symbol': selectedPair
-                    }));
-                }
-            });
 
             // Form Submit Handler
             $('#analyzeForm').on('submit', function() {
@@ -1810,9 +1803,7 @@
             }
 
             // Sayfa yüklendiğinde grafiği başlat
-            $(document).ready(function() {
-                setTimeout(initTradingViewWidget, 100); // Kısa bir gecikme ekle
-            });
+            setTimeout(initTradingViewWidget, 100);
 
             // Pencere boyutu değiştiğinde grafiği yeniden boyutlandır
             $(window).resize(function() {
@@ -1822,34 +1813,7 @@
             });
         });
 
-        // Detay göster/gizle ve tab fonksiyonları
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tab işlevselliği
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const timeframeContent = document.querySelector('.timeframe-content');
-            
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Aktif tab'ı güncelle
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
-                    // İlgili zaman dilimi içeriğini göster
-                    const timeframe = btn.dataset.timeframe;
-                    const content = timeframeContent.innerHTML;
-                    
-                    // İçeriği filtrele ve göster
-                    const sections = content.split('\n\n');
-                    const filteredContent = sections.filter(section => 
-                        section.includes(timeframe === '1h' ? 'Kısa Vadeli' :
-                                       timeframe === '4h' ? 'Orta Vadeli' : 'Uzun Vadeli')
-                    );
-                    
-                    timeframeContent.innerHTML = filteredContent.join('\n\n');
-                });
-            });
-        });
-
+        // Detay göster/gizle fonksiyonu
         function toggleDetails() {
             const detailedComment = $('.detailed-comment');
             const btn = $('.show-details-btn');
