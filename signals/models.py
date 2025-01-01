@@ -9,8 +9,6 @@ class CustomUser(AbstractUser):
         ('premium', 'Premium'),
     ]
     
-    telegram_id = models.CharField(max_length=50, blank=True, null=True)
-    telegram_notifications = models.BooleanField(default=False)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     is_verified = models.BooleanField(default=False)

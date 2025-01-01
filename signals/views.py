@@ -220,29 +220,3 @@ def upgrade_to_premium(request):
         return redirect('signals:trade-signal')
     
     return render(request, 'upgrade.html')
-
-@login_required
-def connect_telegram(request):
-    if request.method == 'POST':
-        telegram_id = request.POST.get('telegram_id')
-        
-        try:
-            # Telegram ID'yi doğrula
-            bot = TryptoBot()
-            await bot.send_message(
-                telegram_id,
-                "Torypto bot bağlantınız başarıyla kuruldu! "
-                "Artık sinyalleri ve fiyat alarmlarını Telegram üzerinden alabilirsiniz."
-            )
-            
-            # Kullanıcı bilgilerini güncelle
-            request.user.telegram_id = telegram_id
-            request.user.telegram_notifications = True
-            request.user.save()
-            
-            messages.success(request, "Telegram bağlantınız başarıyla kuruldu!")
-            
-        except Exception as e:
-            messages.error(request, "Telegram bağlantısı kurulamadı. Lütfen ID'nizi kontrol edin.")
-            
-    return render(request, 'connect_telegram.html')

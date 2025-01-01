@@ -580,16 +580,19 @@
         /* Form Layout */
         .form-row {
             display: flex;
+            flex-direction: column;
             gap: 1rem;
-            margin-bottom: 1rem;
+            width: 100%;
         }
 
-        .form-row .select2-container {
-            flex: 1;
+        .select2-container {
+            width: 100% !important;
         }
 
-        .form-row button {
-            width: 200px;
+        .form-row .btn {
+            width: 100%;
+            height: 50px;
+            margin-top: 0.5rem;
         }
 
         /* Select2 özelleştirmeleri için ek stiller */
@@ -886,23 +889,96 @@
         /* Tablo Stilleri */
         .signals-history {
             margin: 2rem 0;
-        }
-
-        .signals-history h2 {
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            width: 100%;
         }
 
         .table-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             background: var(--bg-card);
-            border-radius: 12px;
-            padding: 1rem;
-            box-shadow: var(--card-shadow);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .signals-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        @media (max-width: 768px) {
+            .table-container {
+                margin: 0;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+
+            .signals-table {
+                min-width: 600px; /* Minimum genişlik */
+            }
+        }
+
+        /* Sütun genişliklerini ayarla */
+        .signals-table th:nth-child(1) { width: 35%; }
+        .signals-table th:nth-child(2) { width: 20%; }
+        .signals-table th:nth-child(3) { width: 25%; }
+        .signals-table th:nth-child(4) { width: 20%; }
+
+        /* Mobil için düzenlemeler */
+        @media (max-width: 768px) {
+            .signals-history {
+                margin: 1rem 0;
+                padding: 0;
+            }
+
+            .table-container {
+                margin: 0;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+
+            .signals-table {
+                font-size: 0.85rem;
+            }
+
+            .signals-table th,
+            .signals-table td {
+                padding: 0.75rem;
+                white-space: nowrap;
+            }
+
+            /* Mobilde sütun genişliklerini ayarla */
+            .signals-table th:nth-child(1) { min-width: 120px; }
+            .signals-table th:nth-child(2) { min-width: 80px; }
+            .signals-table th:nth-child(3) { min-width: 100px; }
+            .signals-table th:nth-child(4) { min-width: 100px; }
+        }
+
+        /* Kaydırma göstergesi */
+        @media (max-width: 768px) {
+            .table-container::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 30px;
+                background: linear-gradient(to left, var(--bg-dark), transparent);
+                pointer-events: none;
+            }
+
+            .table-container::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 30px;
+                background: linear-gradient(to right, var(--bg-dark), transparent);
+                pointer-events: none;
+            }
         }
 
         .empty-state {
@@ -935,9 +1011,9 @@
         }
 
         .analysis-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 1.5rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 1rem;
@@ -958,11 +1034,11 @@
 
         /* Detaylı Analiz Stili */
         .show-details-btn {
-    width: 100%;
+            width: 100%;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 1rem;
-    border-radius: 8px;
+            border-radius: 8px;
             color: var(--text-primary);
             font-size: 0.95rem;
             cursor: pointer;
@@ -991,8 +1067,8 @@
             border-radius: 6px;
             font-weight: 500;
             font-size: 0.9rem;
-    display: flex;
-    align-items: center;
+            display: flex;
+            align-items: center;
             gap: 0.5rem;
         }
 
@@ -1071,7 +1147,6 @@
 
         .select2-container--default .select2-results__option--highlighted[aria-selected] {
             background-color: var(--primary) !important;
-            color: var(--bg-dark) !important;
         }
 
         .select2-container--default .select2-results__option[aria-selected=true] {
@@ -1088,6 +1163,312 @@
             color: var(--text-primary) !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
         }
+
+        /* Responsive Design İyileştirmeleri */
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.8rem;
+            }
+
+            .header-content {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+                margin-top: 60px;
+            }
+
+            .pair-selector {
+                padding: 1rem;
+            }
+
+            .form-row {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+
+            /* Live Price Ticker */
+            .live-price-ticker {
+                flex-direction: column;
+                padding: 1rem;
+                text-align: center;
+            }
+
+            .price-info {
+                margin-bottom: 1rem;
+                justify-content: center;
+            }
+
+            .price-container {
+                align-items: center;
+            }
+
+            .price-value {
+                font-size: 1.5rem;
+            }
+
+            /* Analysis Card */
+            .analysis-card {
+                padding: 1rem;
+            }
+
+            .analysis-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .signal-badge {
+                align-self: center;
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Signals History Table */
+            .signals-table {
+                font-size: 0.8rem;
+            }
+
+            .signals-table th,
+            .signals-table td {
+                padding: 0.5rem;
+            }
+
+            .pair-cell {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+            .pair-cell img {
+                width: 20px;
+                height: 20px;
+            }
+
+            /* TradingView Container */
+            .tradingview-container {
+                height: 400px !important;
+                margin: 1rem 0;
+            }
+
+            /* Footer */
+            .footer {
+                padding: 1.5rem 1rem;
+            }
+
+            .footer p {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Daha küçük ekranlar için ek düzenlemeler */
+        @media (max-width: 480px) {
+            .header-content {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .user-menu {
+                width: 100%;
+                justify-content: center;
+                margin-top: 0.5rem;
+            }
+
+            .price-value {
+                font-size: 1.2rem;
+            }
+
+            .signals-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .analysis-details {
+                padding: 0.5rem;
+            }
+
+            .show-details-btn {
+                width: 100%;
+            }
+
+            /* Select2 mobil düzenlemeleri */
+            .select2-container .select2-selection--single {
+                height: 40px !important;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                line-height: 40px !important;
+            }
+
+            /* Preloader düzenlemesi */
+            #preloader p {
+                font-size: 0.9rem;
+                padding: 0 1rem;
+                text-align: center;
+            }
+        }
+
+        /* Orta boy ekranlar için düzenlemeler */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            .signal-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tradingview-container {
+                height: 500px !important;
+            }
+        }
+
+        /* Yatay mobil görünüm için düzenlemeler */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .main-content {
+                margin-top: 70px;
+            }
+
+            .tradingview-container {
+                height: 300px !important;
+            }
+
+            .header {
+                position: absolute;
+            }
+        }
+
+        /* Form düzenlemeleri */
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+
+            .form-row .select2-container {
+                margin-bottom: 0.5rem;
+            }
+
+            .form-row .btn {
+                margin: 0;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        /* Hamburger Menü */
+        .hamburger-menu {
+            display: block;
+            width: 30px;
+            height: 30px;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger-icon,
+        .hamburger-icon::before,
+        .hamburger-icon::after {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--text-primary);
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .hamburger-icon::before,
+        .hamburger-icon::after {
+            content: '';
+            position: absolute;
+        }
+
+        .hamburger-icon::before { top: -6px; }
+        .hamburger-icon::after { bottom: -6px; }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            min-width: 200px;
+            z-index: 1000;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        /* Tablo düzenlemeleri */
+        .signals-history {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .signals-table {
+            min-width: 600px;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            /* Mobil menü */
+            .user-menu > *:not(.hamburger-menu) {
+                display: none;
+            }
+
+            .hamburger-menu {
+                display: block;
+            }
+
+            /* Tablo */
+            .table-container {
+                margin: 0 -1rem;
+                padding: 0 1rem;
+            }
+
+            .signals-table {
+                font-size: 0.85rem;
+            }
+
+            /* Form */
+            .form-row {
+                padding: 0;
+            }
+
+            .select2-container {
+                margin-bottom: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1096,13 +1477,18 @@
         <div class="header-content">
             <a href="{% url 'signals:trade-signal' %}" class="logo">TORYPTO</a>
             <div class="user-menu">
-            {% if user.is_authenticated %}
-                    <span class="welcome">{{ user.username }}</span>
-                    <a href="{% url 'signals:logout' %}" class="btn">Çıkış</a>
-            {% else %}
+                {% if user.is_authenticated %}
+                    <div class="hamburger-menu">
+                        <div class="hamburger-icon"></div>
+                    </div>
+                    <div class="mobile-menu">
+                        <span class="welcome">{{ user.username }}</span>
+                        <a href="{% url 'signals:logout' %}" class="btn">Çıkış</a>
+                    </div>
+                {% else %}
                     <a href="{% url 'signals:login' %}" class="btn">Giriş</a>
-            {% endif %}
-        </div>
+                {% endif %}
+            </div>
         </div>
     </header>
 
@@ -1118,22 +1504,19 @@
         <div class="pair-selector">
             <form method="get" action="{% url 'signals:trade-signal' %}" id="analyzeForm">
                 <div class="form-row">
-                    <select name="pair" id="pair" style="width: 100%;">
-                {% for pair in pairs %}
+                    <select name="pair" id="pair">
+                        {% for pair in pairs %}
                             <option value="{{ pair.symbol }}" 
                                     {% if pair.symbol == selected_pair %}selected{% endif %}
                                     data-icon="{{ pair.icon.url }}">
                                 {{ pair.name }} ({{ pair.symbol }})
                             </option>
-                {% endfor %}
-            </select>
-                    <button type="submit" class="btn btn-primary" id="analyzeBtn">
-                        <span class="btn-text">Analiz Yap</span>
-                        <div class="btn-loader" style="display: none;"></div>
-                    </button>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn">Analiz Yap</button>
                 </div>
-        </form>
-</div>
+            </form>
+        </div>
 
         <!-- Live Price Ticker -->
         <div class="live-price-ticker">
@@ -1144,7 +1527,7 @@
                 <div class="pair-details">
                     <h3>{{ selected_pair_info.name }}</h3>
                     <span class="pair-symbol">{{ selected_pair }}</span>
-            </div>
+                </div>
             </div>
             <div class="price-container">
                 <div class="price-value" id="livePriceValue">
@@ -1153,9 +1536,9 @@
                     {% else %}
                         Yükleniyor...
                     {% endif %}
-            </div>
+                </div>
                 <div class="price-change" id="priceChange"></div>
-        </div>
+            </div>
         </div>
 
         <!-- Current Analysis Card -->
@@ -1165,12 +1548,12 @@
                 <div class="signal-badge {{ signal|lower }}">
                     {% if signal == "Buy" %}
                         <span class="signal-icon">💹</span> AL
-        {% elif signal == "Sell" %}
+                    {% elif signal == "Sell" %}
                         <span class="signal-icon">📉</span> SAT
                     {% else %}
                         <span class="signal-icon">⏳</span> BEKLE
                     {% endif %}
-            </div>
+                </div>
             </div>
             
             <div class="analysis-content">
@@ -1178,10 +1561,10 @@
                 <div class="analysis-summary">
                     {% if short_comment %}
                         <p class="short-comment">{{ short_comment|safe }}</p>
-        {% else %}
+                    {% else %}
                         <p class="short-comment">⚙️ Analiz yapılıyor, lütfen bekleyin...</p>
                     {% endif %}
-            </div>
+                </div>
 
                 <!-- Detaylı Analiz -->
                 <div class="analysis-details">
@@ -1192,27 +1575,27 @@
                         </button>
                         <div class="detailed-comment" style="display: none;">
                             {{ detailed_comment|safe|linebreaks }}
-            </div>
+                        </div>
                     {% endif %}
+                </div>
             </div>
-        </div>
         </div>
 
         <!-- Previous Signals Table -->
         <div class="signals-history">
             <h2>📊 Geçmiş Sinyaller</h2>
             <div class="table-container">
-<table class="signals-table">
-    <thead>
-        <tr>
-            <th>Parite</th>
-            <th>Sinyal</th>
+                <table class="signals-table">
+                    <thead>
+                        <tr>
+                            <th>Parite</th>
+                            <th>Sinyal</th>
                             <th>Fiyat</th>
                             <th>Zaman</th>
-        </tr>
-    </thead>
-   <tbody>
-    {% for signal in signals %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for signal in signals %}
                         <tr>
                             <td>
                                 <div class="pair-cell">
@@ -1222,30 +1605,26 @@
                             </td>
                             <td>
                                 <span class="analysis-signal {{ signal.signal|lower }}">
-                                    {% if signal.signal == "Buy" %}
-                                        AL
-                                    {% elif signal.signal == "Sell" %}
-                                        SAT
-            {% else %}
-                                        BEKLE
-            {% endif %}
+                                    {% if signal.signal == "Buy" %}AL
+                                    {% elif signal.signal == "Sell" %}SAT
+                                    {% else %}BEKLE{% endif %}
                                 </span>
-        </td>
+                            </td>
                             <td>${{ signal.price_at_signal|floatformat:2 }}</td>
                             <td>{{ signal.updated_at|timesince }} önce</td>
-    </tr>
-    {% empty %}
-                            <tr class="empty-state">
-                                <td colspan="4">
-                                    <div class="empty-message">
-                                        <span>📈</span>
-                                        <p>Henüz sinyal geçmişi bulunmuyor</p>
-                                    </div>
-                                </td>
-    </tr>
-    {% endfor %}
-</tbody>
-</table>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="empty-state">
+                                <div class="empty-message">
+                                    <span>📈</span>
+                                    <p>Henüz sinyal geçmişi bulunmuyor</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -1260,7 +1639,7 @@
         <div class="footer-content">
             <h3>⚠️ Risk Bildirimi</h3>
             <p>Bu platformda sunulan sinyaller, analizler ve piyasa öngörüleri yalnızca genel bilgilendirme amacı taşımakta olup, hiçbir şekilde yatırım tavsiyesi veya yönlendirmesi niteliğinde değildir. Kripto para ve diğer finansal piyasalar, yüksek volatiliteye sahip olup, ani fiyat dalgalanmalarına maruz kalabilir. Bu nedenle, sunulan veriler geçmiş performanslara dayansa da gelecekteki sonuçları garanti etmez. Kullanıcılar, platformda sağlanan bilgilere dayanarak yatırım yapma kararı almadan önce, kendi araştırmalarını yapmalı ve bağımsız finansal danışmanlardan görüş almalıdır. Platform, sunulan sinyal ve analizlerin doğruluğundan, eksiksizliğinden veya güncelliğinden sorumlu tutulamaz; kullanıcıların bu bilgilere dayanarak yapacağı işlemler sonucunda doğabilecek doğrudan veya dolaylı zararlardan platform geliştiricileri ve operatörleri sorumlu değildir. Tüm yatırım kararları, kullanıcının kendi inisiyatifi ve sorumluluğundadır.</p>
-    </div>
+        </div>
     </footer>
 
     <!-- Scripts -->
@@ -1487,6 +1866,25 @@
                 btnIcon.text('▲');
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger-menu');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            
+            if (hamburger && mobileMenu) {
+                hamburger.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('active');
+                    // Hamburger animasyonu için ek sınıf ekleyebilirsiniz
+                });
+
+                // Menü dışına tıklandığında menüyü kapat
+                document.addEventListener('click', function(e) {
+                    if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+                        mobileMenu.classList.remove('active');
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
