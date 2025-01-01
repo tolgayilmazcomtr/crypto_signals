@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torypto | Paket Seçimi</title>
+    
+    <!-- Fontlar -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6a;
+            --secondary: #7000ff;
+            --bg-dark: #0a0b0e;
+            --bg-card: #151720;
+            --text-primary: #ffffff;
+            --text-secondary: #8a8d93;
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --gradient: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(112,0,255,0.1));
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Önceki CSS kodları */
+
+        .packages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .package {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .package:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .package-name {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .package-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .package-price span {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .features {
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .feature {
+            margin-bottom: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .feature:before {
+            content: "✓";
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+
+        .register-form {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .register-form.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">TORYPTO</div>
+
+        <div class="packages">
+            <!-- Ücretsiz Paket -->
+            <div class="package">
+                <div class="package-name">Ücretsiz</div>
+                <div class="package-price">0₺ <span>/ay</span></div>
+                <div class="features">
+                    <div class="feature">Temel teknik analiz</div>
+                    <div class="feature">5 kripto para takibi</div>
+                    <div class="feature">Günlük 10 sinyal</div>
+                    <div class="feature">Email bildirimleri</div>
+                </div>
+                <a href="{% url 'signals:register' %}" class="btn">Hesap Oluştur</a>
+            </div>
+
+            <!-- Pro Paket -->
+            <div class="package">
+                <div class="package-name">Pro</div>
+                <div class="package-price">199₺ <span>/ay</span></div>
+                <div class="features">
+                    <div class="feature">Gelişmiş teknik analiz</div>
+                    <div class="feature">Sınırsız kripto para takibi</div>
+                    <div class="feature">Sınırsız sinyal</div>
+                    <div class="feature">Telegram bildirimleri</div>
+                    <div class="feature">7/24 Destek</div>
+                </div>
+                <a href="{% url 'signals:register' %}" class="btn">Hesap Oluştur</a>
+            </div>
+        </div>
+
+        <!-- Kayıt Formu -->
+        <div id="registerForm" class="register-form">
+            <form method="POST" action="{% url 'signals:register' %}">
+                {% csrf_token %}
+                <input type="hidden" name="package" id="selectedPackage">
+                <div class="form-group">
+                    <input type="text" name="username" placeholder="Kullanıcı Adı" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="E-posta" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Parola" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password2" placeholder="Parola Tekrar" required>
+                </div>
+                <button type="submit" class="btn">Hesap Oluştur</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showRegisterForm(package) {
+            document.getElementById('registerForm').classList.add('active');
+            document.getElementById('selectedPackage').value = package;
+            document.getElementById('registerForm').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html> 

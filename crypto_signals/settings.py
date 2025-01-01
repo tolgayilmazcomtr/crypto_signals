@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'signals',  
     'rest_framework',
     'background_task',
-
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +58,10 @@ ROOT_URLCONF = 'crypto_signals.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],  
+        'DIRS': [
+            BASE_DIR / 'templates',
+            BASE_DIR / 'signals' / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,13 +122,25 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Parite ikonları için özel klasör
+PAIR_ICONS_DIR = MEDIA_ROOT / 'pair_icons'
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'signals.CustomUser'
-LOGIN_URL = 'login'
+LOGIN_URL = 'signals:login'
+LOGIN_REDIRECT_URL = 'signals:trade-signal'
+LOGOUT_REDIRECT_URL = 'signals:logout_done'
 
 # settings.py
 
@@ -140,3 +155,30 @@ MESSAGE_TAGS = {
     messages.WARNING: 'warning',
     messages.ERROR: 'danger',  # Bootstrap uyumlu hata mesajları için
 }
+
+# Channels
+ASGI_APPLICATION = 'crypto_signals.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
+
+# Authentication settings
+LOGIN_URL = 'signals:login'
+LOGIN_REDIRECT_URL = 'signals:trade-signal'
+LOGOUT_REDIRECT_URL = 'signals:logout_done'
+
+# Session settings
+SESSION_COOKIE_AGE = 86400  # 24 saat
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# E-posta ayarları - Hostinger SMTP
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.hostinger.com'
+EMAIL_PORT = 465  # SSL için 465 portu
+EMAIL_USE_SSL = True  # SSL kullanımı
+EMAIL_USE_TLS = False  # SSL kullanıyoruz, TLS değil
+EMAIL_HOST_USER = 'info@torypto.com'
+EMAIL_HOST_PASSWORD = '8n|sw?!tJB'
+DEFAULT_FROM_EMAIL = 'info@torypto.com'  # Gönderen e-posta adresi

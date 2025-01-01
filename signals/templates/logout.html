@@ -4,11 +4,11 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Çıkış Yapıldı</title>
-  <!-- Google Font Örneği -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Torypto | Çıkış Yapıldı</title>
+  <!-- Fontlar -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
     * {
@@ -57,6 +57,12 @@
       background: #008080;
       color: #fff;
     }
+    .message {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
@@ -65,7 +71,7 @@
     <p>Başarıyla çıkış yaptınız. Tekrar giriş yapmak isterseniz aşağıdaki bağlantıya tıklayabilirsiniz.</p>
 
     <div class="bottom-link">
-      <a href="{% url 'login' %}">Giriş Sayfasına Dön</a>
+      <a href="{% url 'signals:login' %}">Giriş Sayfasına Dön</a>
     </div>
   </div>
 </body>

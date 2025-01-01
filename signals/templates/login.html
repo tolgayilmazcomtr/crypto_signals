@@ -3,131 +3,157 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Giriş Yap</title>
-  <!-- Google Font Örneği -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torypto | Giriş Yap</title>
+    
+    <!-- Fontlar -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #8bd3dd, #4cb2c9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      color: #333;
-    }
-    .login-container {
-      width: 360px;
-      background: #fff;
-      border-radius: 8px;
-      padding: 40px 30px;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    h1 {
-      font-weight: 600;
-      font-size: 1.8rem;
-      color: #008080;
-      margin-bottom: 25px;
-    }
-    .messages {
-      margin-bottom: 20px;
-    }
-    .messages p {
-      background: #f8d7da;
-      padding: 10px;
-      border-radius: 4px;
-      color: #721c24;
-      margin-bottom: 5px;
-      border: 1px solid #f5c6cb;
-      font-size: 0.95rem;
-    }
-    label {
-      display: block;
-      text-align: left;
-      font-weight: 500;
-      margin-bottom: 8px;
-      color: #333;
-    }
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 0.95rem;
-      transition: border-color 0.3s ease;
-    }
-    input[type="text"]:focus, input[type="password"]:focus {
-      border-color: #008080;
-      outline: none;
-    }
-    button {
-      width: 100%;
-      background: #008080;
-      color: #fff;
-      padding: 14px;
-      border-radius: 5px;
-      border: none;
-      font-weight: 500;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    button:hover {
-      background: #006f70;
-    }
-    .bottom-link {
-      margin-top: 20px;
-      font-size: 0.9rem;
-    }
-    .bottom-link a {
-      color: #008080;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .bottom-link a:hover {
-      text-decoration: underline;
-    }
-  </style>
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6a;
+            --secondary: #7000ff;
+            --bg-dark: #0a0b0e;
+            --bg-card: #151720;
+            --text-primary: #ffffff;
+            --text-secondary: #8a8d93;
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --gradient: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(112,0,255,0.1));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .links {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: var(--primary-dark);
+        }
+
+        .messages {
+            margin-bottom: 1.5rem;
+        }
+
+        .messages p {
+            padding: 0.8rem;
+            border-radius: 8px;
+            background: rgba(255, 59, 48, 0.1);
+            color: #ff3b30;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
 </head>
 <body>
-  <div class="login-container">
-    <h1>Giriş Yap</h1>
+    <div class="login-container">
+        <div class="logo">TORYPTO</div>
 
-    <!-- Django messages -->
-    <div class="messages">
-      {% if messages %}
-        {% for message in messages %}
-          <p>{{ message }}</p>
-        {% endfor %}
-      {% endif %}
+        <div class="messages">
+            {% if messages %}
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <form method="POST" action="{% url 'signals:login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="username" placeholder="Kullanıcı Adı" required>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" placeholder="Parola" required>
+            </div>
+            <button type="submit" class="btn">Giriş Yap</button>
+        </form>
+
+        <div class="links">
+            <a href="{% url 'signals:register' %}">Hesap Oluştur</a> &nbsp;|&nbsp; 
+            <a href="{% url 'signals:reset-password' %}">Şifremi Unuttum</a>
+        </div>
     </div>
-
-    <form method="POST">
-      {% csrf_token %}
-      <label for="username">Kullanıcı Adı</label>
-      <input type="text" name="username" id="username" required>
-
-      <label for="password">Şifre</label>
-      <input type="password" name="password" id="password" required>
-
-      <button type="submit">Giriş Yap</button>
-    </form>
-
-    <!-- Örnek: Şifre sıfırlama veya kayıt linki gibi -->
-    <div class="bottom-link">
-      <a href="#">Şifremi Unuttum?</a>
-    </div>
-  </div>
 </body>
 </html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torypto | Premium'a Yükselt</title>
+    
+    <!-- Fontlar ve stiller register.html'den alınacak -->
+    
+</head>
+<body>
+    <div class="reset-container">
+        <div class="logo">TORYPTO</div>
+
+        <div class="package-info">
+            <h3>Premium Paket</h3>
+            <div class="package-features">
+                <li>Tüm pariteleri takip edin</li>
+                <li>Gelişmiş teknik analiz göstergeleri</li>
+                <li>Gerçek zamanlı fiyat ve hacim takibi</li>
+                <li>Sınırsız sinyal</li>
+                <li>Email ve Telegram bildirimleri</li>
+                <li>7/24 öncelikli destek</li>
+            </div>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn">Premium'a Yükselt</button>
+        </form>
+
+        <div class="links">
+            <a href="{% url 'signals:trade-signal' %}">Ana Sayfaya Dön</a>
+        </div>
+    </div>
+</body>
+</html> 

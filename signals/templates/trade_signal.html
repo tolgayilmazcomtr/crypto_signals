@@ -1,704 +1,1492 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>torypto kripto sinyal yakalama programı</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torypto | Kripto Sinyal Platformu</title>
+    
+    <!-- Fontlar -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 
     <!-- TradingView -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #121212; /* Siyah tonları */
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6a;
+            --secondary: #7000ff;
+            --bg-dark: #0a0b0e;
+            --bg-card: #151720;
+            --text-primary: #ffffff;
+            --text-secondary: #8a8d93;
+            --success: #00ff88;
+            --warning: #ffbb00;
+            --danger: #ff3366;
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --gradient: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(112,0,255,0.1));
+        }
+
+        * {
             margin: 0; 
             padding: 0;
-            color: #ddd; /* Açık gri metin rengi */
-            background: radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%);
-        }
-        /* HEADER */
-        header {
-            background: #0c1421; /* Koyu arka plan */
-            border-bottom: 1px solid #444;
-            padding: 0 20px;
-            height: 60px; /* Header yüksekliği */
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        header .header-left h1 {
-            margin: 0;
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #fff; /* Beyaz renk başlık için */
-        }
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .header-right a {
-            text-decoration: none;
-            color: #009f04; /* Yeşil link rengi */
-            font-weight: 500;
-        }
-        .header-right .welcome {
-            color: #fff; /* Beyaz renk */
-            font-weight: 500;
+            box-sizing: border-box;
         }
 
-        /* CONTAINER */
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-        form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        form label {
-            font-weight: 500;
-            color: #ddd; /* Açık gri metin rengi */
-        }
-        .select2-container .select2-selection--single {
-            height: 40px !important;
-            border: 1px solid #009f04 !important; /* Yeşil sınır */
-            border-radius: 5px !important;
-            background: #333 !important; /* Koyu arka plan */
-            color: #fff; /* Beyaz metin */
-        }
-        .select2-results { background-color: #1c1c1c; }
-        .select2-search input { background-color: #1c1c1c; }
-        .select2-search { background-color: #1c1c1c; }
-        .select2-container--default .select2-selection--single .select2-selection__rendered { color: #009f04; }
-        button {
-            background: #009f04; /* Yeşil arka plan */
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        button:hover {
-            opacity: 0.9;
-        }
-
-        .info-text {
-            margin-bottom: 20px;
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
             line-height: 1.6;
-            background: #333; /* Koyu arka plan */
-            padding: 15px;
-            border-radius: 5px;
-            border: 1px solid #444;
-        }
-        .info-text strong {
-            color: #009f04; /* Yeşil metin rengi */
         }
 
-        .tv-chart-container {
-            background: #333; /* Koyu arka plan */
-            border: 1px solid #009f04;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            height: 600px;
-        }
-        .tradingview-widget-container {
-            position: relative;
-            height: 100%;
-        }
-        #tradingview_chart {
+        /* Header Styles */
+        .header {
+            background: rgba(21, 23, 32, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            position: fixed;
             width: 100%;
-            height: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1440px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Pair Selector Card */
+        .pair-selector {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Select2 Customization */
+        .select2-container {
+            width: 100% !important;
+        }
+
+        .select2-container--default .select2-selection--single {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 8px !important;
+            height: 50px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: var(--text-primary) !important;
+            line-height: 50px !important;
+            padding-left: 1rem !important;
+        }
+
+        /* Signal Cards */
+        .signal-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .signal-card {
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            color: #ddd; /* Açık gri metin rengi */
-            position: relative;
-            background: #444; /* Koyu arka plan */
-            border:1px solid #555;
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
         }
 
-        .signal-buy {
-            border: 0px solid #28a745;
-            background: #004d00; /* Koyu yeşil arka plan */
-        }
-        .signal-sell {
-            border: 0px solid #dc3545;
-            background: #660000; /* Koyu kırmızı arka plan */
-        }
-        .signal-hold {
-            border: 0px solid #ffc107;
-            background: #4d4d00; /* Koyu sarı arka plan */
+        .signal-card:hover {
+            transform: translateY(-5px);
         }
 
-        .signal-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin:0 0 10px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .signal-card.buy {
+            border-left: 4px solid var(--success);
         }
 
-        .legend-icon {
-            width:15px; 
-            height:15px; 
-            border-radius:50%;
-            display:inline-block;
-        }
-        .legend-buy {
-            background:#28a745;
-        }
-        .legend-sell {
-            background:#dc3545;
-        }
-        .legend-hold {
-            background:#ffc107;
+        .signal-card.sell {
+            border-left: 4px solid var(--danger);
         }
 
-        .signal-description {
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom:20px;
+        .signal-card.hold {
+            border-left: 4px solid var(--warning);
         }
 
-        .legend {
-            display: flex;
-            gap: 10px;
-            align-items:center;
-            margin: 20px 0;
-        }
-
-        .legend span {
-            display:flex;
-            align-items:center;
-            gap:5px;
-            font-size:0.9rem;
-        }
-
-        .details-toggle {
-            background:none;
-            border:none;
-            color:#009f04;
-            font-weight:500;
-            cursor:pointer;
-            padding:0;
-            text-decoration:underline;
-            margin-bottom:10px;
-        }
-        .details-toggle:hover {
-            opacity:0.8;
-        }
-
-        .details-section {
-            overflow:hidden;
-            max-height:0;
-            opacity:0;
+        /* Buttons */
+        .btn {
+            background: var(--gradient);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
             transition: all 0.3s ease;
-            white-space: pre-line;
-            margin-bottom:0;
+            backdrop-filter: blur(4px);
         }
 
-        .details-section.open {
-            max-height:500px;
-            opacity:1;
-            padding-top:10px;
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg-dark);
         }
 
-        .details-section h3 {
-            margin-top:0;
-            color:#fff;
-            font-weight:600;
-            margin-bottom:10px;
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
         }
 
-        /* Preloader */
+        /* TradingView Container */
+        .tradingview-container {
+            width: 100%;
+            height: 700px !important;
+            margin: 2rem 0;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            position: relative;
+        }
+
+        #tradingview_chart {
+            width: 100% !important;
+            height: 100% !important;
+            position: absolute !important;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        /* TradingView widget'ı için özel stiller */
+        .tradingview-widget-container {
+            background: var(--bg-card) !important;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(to bottom, transparent, var(--bg-card));
+            padding: 3rem 2rem;
+            text-align: left;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer h3 {
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .footer p {
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.6;
+            opacity: 0.7;
+        }
+
+        .footer-content {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Footer responsive */
+        @media (max-width: 768px) {
+            .footer {
+                padding: 2rem 1rem;
+            }
+            
+            .footer h3 {
+                font-size: 0.85rem;
+            }
+            
+            .footer p {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .signal-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .tradingview-container {
+                height: 500px !important;
+            }
+        }
+
+        /* Preloader Styles */
         #preloader {
-            display:none;
             position: fixed;
-            top:0; left:0; 
-            width:100vw; 
-            height:100vh; 
-            background: rgba(0,0,0,0.8); /* Siyah arka plan */
-            display:flex; 
-            flex-direction:column;
-            align-items:center; 
-            justify-content:center; 
-            z-index:9999;
-            color:#fff;
-            font-weight:500;
-            font-size:1.1rem;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 11, 14, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
         }
+
         .spinner {
-            border: 6px solid #f3f3f3; 
-            border-top: 6px solid #009f04; 
-            border-radius: 50%; 
-            width: 50px; 
-            height: 50px; 
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--text-secondary);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom:10px;
         }
+
         @keyframes spin {
+            0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
+        /* Select2 Dark Theme Fixes */
+        .select2-container--default .select2-selection--single {
+            background: var(--bg-card) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .select2-dropdown {
+            background: var(--bg-card) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 8px !important;
+            margin-top: 4px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .select2-search--dropdown {
+            padding: 10px !important;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .select2-search__field {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: var(--text-primary) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 6px !important;
+            padding: 8px 12px !important;
+            font-size: 0.95rem !important;
+            transition: all 0.3s ease;
+            width: 100% !important;
+        }
+
+        .select2-search__field:focus {
+            outline: none !important;
+            border-color: var(--primary) !important;
+            background: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.1);
+        }
+
+        .select2-search__field::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .select2-results__option {
+            color: var(--text-primary) !important;
+            padding: 12px 16px !important;
+            border-radius: 4px;
+            margin: 2px 6px;
+            transition: all 0.2s ease;
+        }
+
+        .select2-results__option--highlighted {
+            background: var(--primary) !important;
+            color: var(--bg-dark) !important;
+        }
+
+        .select2-results__options {
+            padding: 6px 4px !important;
+            max-height: 280px !important;
+        }
+
+        .select2-results {
+            padding: 4px !important;
+        }
+
+        /* Select2 Scrollbar */
+        .select2-results__options::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .select2-results__options::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .select2-results__options::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .select2-results__options::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Live Price Ticker */
+        .live-price-ticker {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .price-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .price-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .pair-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pair-details h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .pair-symbol {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .price-container {
+            text-align: right;
+        }
+
+        .price-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .price-change {
+            font-size: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        .price-change.positive {
+            color: var(--success);
+        }
+
+        .price-change.negative {
+            color: var(--danger);
+        }
+
+        /* Analysis Card */
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--card-shadow);
+        }
+
+        .analysis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .signal-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .signal-icon {
+            font-size: 1.2rem;
+        }
+
+        .signal-badge.buy {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .signal-badge.sell {
+            background: rgba(255, 51, 102, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(255, 51, 102, 0.2);
+        }
+
+        .signal-badge.hold {
+            background: rgba(255, 187, 0, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(255, 187, 0, 0.2);
+        }
+
+        .analysis-content {
+            color: var(--text-primary);
+        }
+
+        .short-comment {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .detailed-comment {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .show-details-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .show-details-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-icon {
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+
+        .show-details-btn[aria-expanded="true"] .btn-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Signals Table */
         .signals-table {
             width: 100%;
             border-collapse: collapse;
-            border-radius: 10px;
+            margin: 2rem 0;
+            background: var(--bg-card);
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
-        .signals-table th {
-            background-color: #009f04; /* Yeşil başlık */
-            color: white;
-            padding: 12px;
-        }
-        .signals-table td {
-            padding: 2px;
-            border-bottom: 1px solid #555;
-            text-align: center;
-}
-        
-        .signals-table tr:hover {
-            background-color: #333;
-        }
-        .signal-badge {
-            display: inline-block;
-            width: 80%;  /* Genişlik %80 */
-            text-align: center;
-            padding: 10px 0;
-            border-radius: 5px;
-            font-weight: bold;
-            color: white;
-        }
-        .buy {
-            background-color: #28a745;
-            color: white;
-        }
-        .sell {
-            background-color: #dc3545;
-            color: white;
-        }
-        .hold {
-            background-color: #ffc107;
-            color: white;
-        }
-/* Orbitron fontunu eklemek için Google Fonts'tan çağırma */
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
 
-    .torypto {
-        font-family: 'Orbitron', sans-serif; /* Orbitron fontu */
-        font-size: 18px; /* Font büyüklüğü 18px */
-        color: white; /* Beyaz renk */
-        margin: 0;
-    }
-            .slider-container {
-            overflow: hidden;
-            white-space: nowrap;
-            position: relative;
-            background-color: #0c1421;
-            padding: 10px 0;
+        .signals-table th,
+        .signals-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .slider {
-            display: inline-flex;
-            animation: slide 30s linear infinite;
+
+        .signals-table th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 500;
+            color: var(--text-secondary);
         }
-        .parite {
+
+        .signals-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Form Layout */
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row .select2-container {
+            flex: 1;
+        }
+
+        .form-row button {
+            width: 200px;
+        }
+
+        /* Select2 özelleştirmeleri için ek stiller */
+        .select2-container--default .select2-selection--single {
+            height: 60px !important;
+            padding: 15px 10px !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 30px !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 58px !important;
+        }
+
+        .pair-option {
             display: flex;
             align-items: center;
-            margin: 0 20px;
-            color: white;
-            font-family: Arial, sans-serif;
-            font-size: 16px;
+            padding: 8px;
         }
-        .icon {
-            width: 10px;
-            height: 10px;
+
+        .pair-option img {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
             border-radius: 50%;
-            margin-right: 10px;
         }
-        .buy { background-color: #28a745; }
-        .sell { background-color: #dc3545; }
-        .hold { background-color: #ffc107; }
-        @keyframes slide {
-            from { transform: translateX(0%); }
-            to { transform: translateX(-100%); }
+
+        .pair-info {
+            display: flex;
+            flex-direction: column;
         }
-.pair-box {
+
+        .pair-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .pair-price {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Live Price Ticker düzenlemeleri */
+        .live-price-ticker {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 20px;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .price-info {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .price-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        /* Analysis Card düzenlemeleri */
+        .analysis-card {
+            margin-top: 2rem;
+        }
+
+        .analysis-content {
+            margin-top: 1rem;
+        }
+
+        .short-comment {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .detailed-comment {
+            display: none;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .show-details-btn {
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .show-details-btn:hover {
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        /* Signals Table düzenlemeleri */
+        .signals-table td {
+            vertical-align: middle;
+        }
+
+        .pair-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pair-cell img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        .pair-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .pair-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+        }
+
+        .pair-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pair-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .pair-price {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Select2 özelleştirmeleri */
+        .select2-container--default .select2-selection--single {
+            background-color: var(--bg-card) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .select2-dropdown {
+            background-color: var(--bg-card) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: var(--primary) !important;
+        }
+
+        /* Signals Table Styles */
+        .signals-table .analysis-signal {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            min-width: 80px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .signals-table .analysis-signal.buy {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .signals-table .analysis-signal.sell {
+            background: rgba(255, 51, 102, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(255, 51, 102, 0.2);
+        }
+
+        .signals-table .analysis-signal.hold {
+            background: rgba(255, 187, 0, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(255, 187, 0, 0.2);
+        }
+
+        /* Signals Table Hover Effect */
+        .signals-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .signals-table tbody tr {
+            transition: background 0.3s ease;
+        }
+
+        /* Analysis Card Styles */
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--card-shadow);
+        }
+
+        .analysis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        /* Özet Analiz Stili */
+        .analysis-summary {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .short-comment {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Detaylı Analiz Stili */
+        .timeframe-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .timeframe-content {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        /* İndikatör Grupları */
+        .indicator-group {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .indicator-group h4 {
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .indicator-item {
+            margin: 0.5rem 0;
+            padding-left: 1rem;
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Tablo Stilleri */
+        .signals-history {
+            margin: 2rem 0;
+        }
+
+        .signals-history h2 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-container {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+        }
+
+        .empty-message {
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-message span {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .empty-message p {
+            font-size: 0.9rem;
+        }
+
+        /* Analysis Card Styles */
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--card-shadow);
+        }
+
+        .analysis-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    padding: 10px 30px;
-    border-bottom: 1px solid rgba(0, 255, 100, 0.2);
-    background: #051129;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
-    box-sizing: border-box;
-}
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
 
-.pair-info {
+        /* Özet Analiz Stili */
+        .analysis-summary {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .short-comment {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Detaylı Analiz Stili */
+        .show-details-btn {
+    width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+    border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .show-details-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .timeframe-content {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        /* Signal Badge Styles */
+        .signal-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
     display: flex;
     align-items: center;
-    gap: 15px;
-}
+            gap: 0.5rem;
+        }
 
-.pair-icon {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-    border-radius: 50%;
-    background: #2b2b2b;
-    border: 2px solid #009f04;
-}
+        .signal-badge.buy {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
 
-.pair-name {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #00ff88;
-}
+        .signal-badge.sell {
+            background: rgba(255, 51, 102, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(255, 51, 102, 0.2);
+        }
 
-.live-price {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #ffffff;
-}
+        .signal-badge.hold {
+            background: rgba(255, 187, 0, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(255, 187, 0, 0.2);
+        }
 
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .analysis-card {
+                padding: 1rem;
+            }
+            
+            .analysis-summary {
+                padding: 1rem;
+            }
+            
+            .timeframe-content {
+                padding: 1rem;
+                font-size: 0.85rem;
+            }
+        }
 
+        /* Detaylı yorum içindeki özel stiller */
+        .detailed-comment h3 {
+            color: var(--primary);
+            font-size: 1rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .detailed-comment p {
+            margin-bottom: 1rem;
+        }
+
+        .detailed-comment ul {
+            margin-left: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .detailed-comment li {
+            margin-bottom: 0.5rem;
+        }
+
+        .pair-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .select2-container--default .select2-selection--single {
+            background: var(--bg-card) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 8px !important;
+            height: 50px !important;
+        }
+
+        .select2-dropdown {
+            background: var(--bg-card) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: var(--primary) !important;
+            color: var(--bg-dark) !important;
+        }
+
+        .select2-container--default .select2-results__option[aria-selected=true] {
+            background-color: rgba(0, 255, 136, 0.1) !important;
+        }
+
+        .select2-results__option {
+            padding: 8px 12px !important;
+            color: var(--text-primary) !important;
+        }
+
+        .select2-search__field {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: var(--text-primary) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
     </style>
 </head>
 <body>
-
-    <!-- HEADER -->
-    <header>
-        <div class="header-left">
-    <h1 class="torypto">torypto</h1>
-</div>
-        <div class="header-right">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="{% url 'signals:trade-signal' %}" class="logo">TORYPTO</a>
+            <div class="user-menu">
             {% if user.is_authenticated %}
-                <span class="welcome">Merhaba, {{ user.username }}!</span>
-                <a href="{% url 'logout' %}">Çıkış</a>
+                    <span class="welcome">{{ user.username }}</span>
+                    <a href="{% url 'signals:logout' %}" class="btn">Çıkış</a>
             {% else %}
-                <a href="{% url 'login' %}">Giriş Yap</a>
+                    <a href="{% url 'signals:login' %}" class="btn">Giriş</a>
             {% endif %}
         </div>
-    </header>
-    <div class="slider-container">
-        <div class="slider" id="slider">
-            <!-- Parite Verileri -->
         </div>
-    </div>
+    </header>
+
     <!-- Preloader -->
-    <div id="preloader">
+    <div id="preloader" style="display: none;">
         <div class="spinner"></div>
-        Analiz yapılıyor, lütfen bekleyin...
+        <p>Analiz yapılıyor, lütfen bekleyin...</p>
     </div>
 
-    <div class="container">
-    
-        <!-- Parite Seçimi -->
-        <form method="get" action="">
-            <label for="pair">Parite Seç:</label>
-            <select name="pair" id="pair" style="width: 300px;     background-color: #000;">
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Pair Selector -->
+        <div class="pair-selector">
+            <form method="get" action="{% url 'signals:trade-signal' %}" id="analyzeForm">
+                <div class="form-row">
+                    <select name="pair" id="pair" style="width: 100%;">
                 {% for pair in pairs %}
-                    <option value="{{ pair }}" {% if pair == selected_pair %}selected{% endif %}>{{ pair }}</option>
+                            <option value="{{ pair.symbol }}" 
+                                    {% if pair.symbol == selected_pair %}selected{% endif %}
+                                    data-icon="{{ pair.icon.url }}">
+                                {{ pair.name }} ({{ pair.symbol }})
+                            </option>
                 {% endfor %}
             </select>
-            <button type="submit">Analiz Yap</button>
+                    <button type="submit" class="btn btn-primary" id="analyzeBtn">
+                        <span class="btn-text">Analiz Yap</span>
+                        <div class="btn-loader" style="display: none;"></div>
+                    </button>
+                </div>
         </form>
-
-        <!-- Canlı Fiyat / Seçili Parite Bilgisi -->
-<div class="pair-box">
-    <div class="pair-info">
-        <img src="https://www.binance.com/static/images/common/empty.svg" id="pair-icon" alt="Parite" class="pair-icon">
-        <span class="pair-name">{{ selected_pair }}</span>
-    </div>
-    <div class="live-price">
-        $ <span id="live-price">{{ live_price }}</span>
-    </div>
 </div>
 
-        <!-- Sinyal Kartı -->
-        {% if signal == "Buy" %}
-        <div class="signal-card signal-buy">
-            <div class="signal-title">
-                <span class="legend-icon legend-buy"></span> Al Sinyali
+        <!-- Live Price Ticker -->
+        <div class="live-price-ticker">
+            <div class="price-info">
+                {% if selected_pair_info.icon %}
+                    <img src="{{ selected_pair_info.icon.url }}" alt="{{ selected_pair_info.name }}" class="pair-icon">
+                {% endif %}
+                <div class="pair-details">
+                    <h3>{{ selected_pair_info.name }}</h3>
+                    <span class="pair-symbol">{{ selected_pair }}</span>
             </div>
-            <div class="signal-description">
-                Piyasa şu an yukarı yönlü bir eğilimde görünüyor. Bu, alım fırsatı olabileceğini gösteriyor.
             </div>
-            <button type="button" class="details-toggle" id="details-btn">Detay Göster</button>
-            <div class="details-section" id="details-section">
-                <h3>Detaylı İnceleme</h3>
-                {{ comment }}
+            <div class="price-container">
+                <div class="price-value" id="livePriceValue">
+                    {% if live_price != "Veri alınamadı" %}
+                        ${{ live_price|floatformat:2 }}
+                    {% else %}
+                        Yükleniyor...
+                    {% endif %}
             </div>
+                <div class="price-change" id="priceChange"></div>
         </div>
+        </div>
+
+        <!-- Current Analysis Card -->
+        <div class="analysis-card">
+            <div class="analysis-header">
+                <h2>Teknik Analiz</h2>
+                <div class="signal-badge {{ signal|lower }}">
+                    {% if signal == "Buy" %}
+                        <span class="signal-icon">💹</span> AL
         {% elif signal == "Sell" %}
-        <div class="signal-card signal-sell">
-            <div class="signal-title">
-                <span class="legend-icon legend-sell"></span> Sat Sinyali
+                        <span class="signal-icon">📉</span> SAT
+                    {% else %}
+                        <span class="signal-icon">⏳</span> BEKLE
+                    {% endif %}
             </div>
-            <div class="signal-description">
-                Piyasa şu an aşağı yönlü bir eğilimde. Elinizde varsa, satış yaparak kârı realize etmek mantıklı olabilir.
             </div>
-            <button type="button" class="details-toggle" id="details-btn">Detay Göster</button>
-            <div class="details-section" id="details-section">
-                <h3>Detaylı İnceleme</h3>
-                {{ comment }}
-            </div>
-        </div>
+            
+            <div class="analysis-content">
+                <!-- Özet Analiz -->
+                <div class="analysis-summary">
+                    {% if short_comment %}
+                        <p class="short-comment">{{ short_comment|safe }}</p>
         {% else %}
-        <div class="signal-card signal-hold">
-            <div class="signal-title">
-                <span class="legend-icon legend-hold"></span> Bekle Sinyali
+                        <p class="short-comment">⚙️ Analiz yapılıyor, lütfen bekleyin...</p>
+                    {% endif %}
             </div>
-            <div class="signal-description">
-                Piyasa kararsız veya net bir yönü yok. Yeni bir işlem açmadan önce durumu izlemek mantıklı olabilir.
+
+                <!-- Detaylı Analiz -->
+                <div class="analysis-details">
+                    {% if detailed_comment %}
+                        <button class="show-details-btn" onclick="toggleDetails()">
+                            <span class="btn-text">Detaylı Analiz</span>
+                            <span class="btn-icon">▼</span>
+                        </button>
+                        <div class="detailed-comment" style="display: none;">
+                            {{ detailed_comment|safe|linebreaks }}
             </div>
-            <button type="button" class="details-toggle" id="details-btn">Detay Göster</button>
-            <div class="details-section" id="details-section">
-                <h3>Detaylı İnceleme</h3>
-                {{ comment }}
+                    {% endif %}
             </div>
         </div>
-        {% endif %}
-        <!-- Legend (açıklama) -->
-        <div class="legend">
-            <span><div class="legend-icon legend-buy"></div> Alım yönü</span>
-            <span><div class="legend-icon legend-sell"></div> Satış yönü</span>
-            <span><div class="legend-icon legend-hold"></div> Bekle</span>
         </div>
-<h3>Sinyal Listesi</h3><span>Son 15 parite görüntülenmektedir.</span>
+
+        <!-- Previous Signals Table -->
+        <div class="signals-history">
+            <h2>📊 Geçmiş Sinyaller</h2>
+            <div class="table-container">
 <table class="signals-table">
     <thead>
         <tr>
             <th>Parite</th>
             <th>Sinyal</th>
-            <th>Zaman Dilimi</th>
-            <th>Güncellenme Tarihi</th>
+                            <th>Fiyat</th>
+                            <th>Zaman</th>
         </tr>
     </thead>
    <tbody>
     {% for signal in signals %}
-    <tr {% if signal.pair == selected_pair %} style="background-color: #333;" {% endif %}>
-        <td>{{ signal.pair }}</td>
-        <td class="signal-{{ signal.signal|lower }}">
-            {% if signal.signal == 'Buy' %}
-                <span class="signal-badge buy">Al</span>
-            {% elif signal.signal == 'Sell' %}
-                <span class="signal-badge sell">Sat</span>
+                        <tr>
+                            <td>
+                                <div class="pair-cell">
+                                    <img src="{{ signal.pair_icon }}" alt="{{ signal.pair }}">
+                                    <span>{{ signal.pair }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="analysis-signal {{ signal.signal|lower }}">
+                                    {% if signal.signal == "Buy" %}
+                                        AL
+                                    {% elif signal.signal == "Sell" %}
+                                        SAT
             {% else %}
-                <span class="signal-badge hold">Bekle</span>
+                                        BEKLE
             {% endif %}
+                                </span>
         </td>
-        <td>{{ signal.timeframe }}</td>
-        <td>{{ signal.updated_at|date:"d F Y, H:i" }}</td>
+                            <td>${{ signal.price_at_signal|floatformat:2 }}</td>
+                            <td>{{ signal.updated_at|timesince }} önce</td>
     </tr>
     {% empty %}
-    <tr>
-        <td colspan="6">Henüz sinyal yok.</td>
+                            <tr class="empty-state">
+                                <td colspan="4">
+                                    <div class="empty-message">
+                                        <span>📈</span>
+                                        <p>Henüz sinyal geçmişi bulunmuyor</p>
+                                    </div>
+                                </td>
     </tr>
     {% endfor %}
 </tbody>
-
 </table>
-
-        <!-- TradingView Grafiği -->
-        <div class="tv-chart-container tradingview-widget-container">
-            <div id="tradingview_chart"></div>
+            </div>
         </div>
-        {% with symbol_upper=selected_pair|upper %}
-        {% with tv_symbol='BINANCE:'|add:symbol_upper %}
-        
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                new TradingView.widget({
-                    "width": "100%",
-                    "height": "600",
-                    "symbol": "{{ tv_symbol }}",
-                    "interval": "60",
-                    "timezone": "Etc/UTC",
-                    "theme": "dark", /* Dark tema */
-                    "style": "1",
-                    "locale": "tr",
-                    "toolbar_bg": "#121212", /* Koyu arka plan */
-                    "enable_publishing": false,
-                    "allow_symbol_change": true,
-                    "hide_legend": false,
-                    "save_image": false,
-                    "container_id": "tradingview_chart"
-                });
-            });
-        </script>
-        {% endwith %}
-        {% endwith %}
 
+        <!-- TradingView Chart -->
+        <div class="tradingview-container">
+            <div id="tradingview_chart" style="width: 100%; height: 100%;"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3>⚠️ Risk Bildirimi</h3>
+            <p>Bu platformda sunulan sinyaller, analizler ve piyasa öngörüleri yalnızca genel bilgilendirme amacı taşımakta olup, hiçbir şekilde yatırım tavsiyesi veya yönlendirmesi niteliğinde değildir. Kripto para ve diğer finansal piyasalar, yüksek volatiliteye sahip olup, ani fiyat dalgalanmalarına maruz kalabilir. Bu nedenle, sunulan veriler geçmiş performanslara dayansa da gelecekteki sonuçları garanti etmez. Kullanıcılar, platformda sağlanan bilgilere dayanarak yatırım yapma kararı almadan önce, kendi araştırmalarını yapmalı ve bağımsız finansal danışmanlardan görüş almalıdır. Platform, sunulan sinyal ve analizlerin doğruluğundan, eksiksizliğinden veya güncelliğinden sorumlu tutulamaz; kullanıcıların bu bilgilere dayanarak yapacağı işlemler sonucunda doğabilecek doğrudan veya dolaylı zararlardan platform geliştiricileri ve operatörleri sorumlu değildir. Tüm yatırım kararları, kullanıcının kendi inisiyatifi ve sorumluluğundadır.</p>
     </div>
+    </footer>
 
-    <!-- JS Kütüphaneleri -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
         $(document).ready(function() {
-            // Parite arama kutusu
+            // Select2 Initialization
             $('#pair').select2({
-                placeholder: "Parite Seç",
-                allowClear: true
+                templateResult: formatPairOption,
+                templateSelection: formatPairOption,
+                escapeMarkup: function(m) { return m; }
             });
 
-            // Form submit edilirken preloader aç
-            $('form').on('submit', function() {
-                $('#preloader').show();
+            // Pair Format Function with Price
+            function formatPairOption(pair) {
+                if (!pair.id) return pair.text;
+                var icon = $(pair.element).data('icon');
+                if(!icon) {
+                    // Varsayılan ikon yolu
+                    icon = '/media/pair_icons/default-coin.png';
+                }
+                return $('<span><img src="' + icon + '" class="pair-icon" onerror="this.src=\'/media/pair_icons/default-coin.png\'" /> ' + pair.text + '</span>');
+            }
+
+            // WebSocket bağlantısı
+            let ws;
+            let selectedPair = '{{ selected_pair }}';
+            let reconnectAttempts = 0;
+            const maxReconnectAttempts = 5;
+
+            function connectWebSocket() {
+                // WebSocket protokolünü otomatik belirle
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const ws = new WebSocket(`${protocol}//${window.location.host}/ws/prices/`);
+
+                ws.onopen = function() {
+                    console.log('WebSocket bağlantısı kuruldu');
+                    reconnectAttempts = 0;
+                    
+                    // Seçili pariteye abone ol
+                    ws.send(JSON.stringify({
+                        'type': 'subscribe',
+                        'symbol': selectedPair
+                    }));
+                };
+
+                ws.onmessage = function(e) {
+                    const data = JSON.parse(e.data);
+                    if (data.type === 'price_update' && data.data[selectedPair]) {
+                        updatePrice(data.data[selectedPair]);
+                        // Kaynak bilgisini göster
+                        console.log(`Fiyat kaynağı: ${data.data.source}`);
+                    }
+                };
+
+                ws.onclose = function() {
+                    console.log('WebSocket bağlantısı kapandı');
+                    if (reconnectAttempts < maxReconnectAttempts) {
+                        reconnectAttempts++;
+                        console.log(`Yeniden bağlanılıyor... (${reconnectAttempts}/${maxReconnectAttempts})`);
+                        setTimeout(connectWebSocket, 3000);
+                    }
+                };
+
+                ws.onerror = function(err) {
+                    console.error('WebSocket hatası:', err);
+                };
+
+                return ws;
+            }
+
+            // İlk bağlantıyı kur
+            connectWebSocket();
+
+            // Fiyat güncelleme fonksiyonu
+            function updatePrice(newPrice) {
+                const priceElement = $('#livePriceValue');
+                const oldPrice = parseFloat(priceElement.text().replace('$', ''));
+                newPrice = parseFloat(newPrice);
+                
+                if (isNaN(oldPrice)) {
+                    priceElement.text('$' + newPrice.toFixed(2));
+                    return;
+                }
+                
+                // Fiyat değişimini animasyonlu göster
+                priceElement.css('color', newPrice > oldPrice ? 'var(--success)' : 'var(--danger)');
+                priceElement.text('$' + newPrice.toFixed(2));
+                
+                // 1 saniye sonra rengi normale döndür
+                setTimeout(() => priceElement.css('color', 'var(--text-primary)'), 1000);
+
+                // Yüzde değişimi
+                const change = ((newPrice - oldPrice) / oldPrice * 100);
+                const changeText = change > 0 ? 
+                    `↑ +${change.toFixed(2)}%` : 
+                    `↓ ${change.toFixed(2)}%`;
+                
+                $('#priceChange')
+                    .attr('class', `price-change ${change > 0 ? 'positive' : 'negative'}`)
+                    .text(changeText)
+                    .fadeIn(200);
+            }
+
+            // Parite değiştiğinde
+            $('#pair').on('change', function() {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    // Eski pariteyi unsubscribe
+                    ws.send(JSON.stringify({
+                        'type': 'unsubscribe',
+                        'symbol': selectedPair
+                    }));
+                    
+                    // Yeni pariteye subscribe
+                    selectedPair = $(this).val();
+                    ws.send(JSON.stringify({
+                        'type': 'subscribe',
+                        'symbol': selectedPair
+                    }));
+                }
+            });
+
+            // Form Submit Handler
+            $('#analyzeForm').on('submit', function() {
+                $('#preloader').fadeIn();
+            });
+
+            // TradingView Chart
+            function initTradingViewWidget() {
+                if (window.tvWidget) {
+                    window.tvWidget.remove();
+                }
+                
+                window.tvWidget = new TradingView.widget({
+                    "width": "100%",
+                    "height": "100%",
+                    "symbol": "BINANCE:{{ selected_pair }}",
+                    "interval": "240",
+                    "timezone": "Europe/Istanbul",
+                    "theme": "dark",
+                    "style": "8",
+                    "locale": "tr",
+                    "toolbar_bg": "transparent",
+                    "enable_publishing": false,
+                    "hide_side_toolbar": true,
+                    "allow_symbol_change": true,
+                    "hide_top_toolbar": false,
+                    "hide_legend": false,
+                    "save_image": true,
+                    "container_id": "tradingview_chart",
+                    "autosize": true,
+                    "studies": [
+                        "RSI@tv-basicstudies",
+                        "MACD@tv-basicstudies",
+                        "BB@tv-basicstudies"
+                    ],
+                    "theme": "dark",
+                    "overrides": {
+                        "paneProperties.background": "#131722",
+                        "paneProperties.vertGridProperties.color": "#363c4e",
+                        "paneProperties.horzGridProperties.color": "#363c4e",
+                        "symbolWatermarkProperties.transparency": 90,
+                        "scalesProperties.textColor": "#AAA"
+                    }
+                });
+            }
+
+            // Sayfa yüklendiğinde grafiği başlat
+            $(document).ready(function() {
+                setTimeout(initTradingViewWidget, 100); // Kısa bir gecikme ekle
+            });
+
+            // Pencere boyutu değiştiğinde grafiği yeniden boyutlandır
+            $(window).resize(function() {
+                if (window.tvWidget) {
+                    window.tvWidget.resize();
+                }
             });
         });
 
-        // Sayfa tamamen yüklendiğinde preloader gizle
-        $(window).on('load', function(){
-            $('#preloader').hide();
-        });
-
-        // Detay göster/gizle fonksiyonu
+        // Detay göster/gizle ve tab fonksiyonları
         document.addEventListener('DOMContentLoaded', function() {
-            const detailsBtn = document.getElementById('details-btn');
-            const detailsSection = document.getElementById('details-section');
-            if(detailsBtn && detailsSection) {
-                let isOpen = false;
-                detailsBtn.addEventListener('click', function() {
-                    isOpen = !isOpen;
-                    if(isOpen) {
-                        detailsSection.classList.add('open');
-                        detailsBtn.textContent = "Detay Gizle";
-                    } else {
-                        detailsSection.classList.remove('open');
-                        detailsBtn.textContent = "Detay Göster";
-                    }
-                });
-            }
-        });
-    </script>
-        <script>
-        function updateSignal(pair) {
-            fetch(`/api/update-signal/?pair=${pair}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(`${pair} için sinyal güncellendi.`);
-                        location.reload();
-                    } else {
-                        alert(`Güncelleme başarısız: ${data.error}`);
-                    }
-                })
-                .catch(error => {
-                    console.error('Güncelleme hatası:', error);
-                    alert('Bağlantı hatası.');
-                });
-        }
-    </script>
-    <script>
-        const pariteRows = Array.from(document.querySelectorAll('.signals-table tbody tr'));
-        const slider = document.getElementById('slider');
-        
-        // En güncel 15 pariteyi seçme
-        const sortedRows = pariteRows.sort((a, b) => {
-            const dateA = new Date(a.cells[3].textContent);
-            const dateB = new Date(b.cells[3].textContent);
-            return dateB - dateA; // Tarihe göre azalan sırala
-        }).slice(0, 20); // Son 15 pariteyi al
-        
-        sortedRows.forEach(row => {
-            const parite = row.cells[0].textContent;
-            const sinyalClass = row.cells[1].querySelector('span').classList;
-            let colorClass = 'sell';
+            // Tab işlevselliği
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const timeframeContent = document.querySelector('.timeframe-content');
             
-            if (sinyalClass.contains('buy')) {
-                colorClass = 'buy';
-            } else if (sinyalClass.contains('hold')) {
-                colorClass = 'hold';
-            }
-            
-            const pariteItem = document.createElement('div');
-            pariteItem.classList.add('parite');
-            pariteItem.innerHTML = `<div class="icon ${colorClass}"></div>${parite}`;
-            slider.appendChild(pariteItem);
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Aktif tab'ı güncelle
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    // İlgili zaman dilimi içeriğini göster
+                    const timeframe = btn.dataset.timeframe;
+                    const content = timeframeContent.innerHTML;
+                    
+                    // İçeriği filtrele ve göster
+                    const sections = content.split('\n\n');
+                    const filteredContent = sections.filter(section => 
+                        section.includes(timeframe === '1h' ? 'Kısa Vadeli' :
+                                       timeframe === '4h' ? 'Orta Vadeli' : 'Uzun Vadeli')
+                    );
+                    
+                    timeframeContent.innerHTML = filteredContent.join('\n\n');
+                });
+            });
         });
 
-        // Döngü ekle - boşluk olmaması için
-        const duplicate = slider.cloneNode(true);
-        slider.parentNode.appendChild(duplicate);
-    </script>
-<script>
-document.addEventListener('DOMContentLoaded', async function () {
-    const pair = "{{ selected_pair }}".replace('USDT', '').toLowerCase();
-    const pairIcon = document.getElementById('pair-icon');
-
-    try {
-        // CoinGecko'dan tüm kripto listesi çek
-        const response = await fetch('https://api.coingecko.com/api/v3/coins/list');
-        const coins = await response.json();
-        
-        // Pariteyi listeden bul
-        const coin = coins.find(c => c.symbol === pair);
-
-        if (coin) {
-            const coinData = await fetch(`https://api.coingecko.com/api/v3/coins/${coin.id}`);
-            const coinDetails = await coinData.json();
-            pairIcon.src = coinDetails.image.large;
-        } else {
-            // Parite bulunamazsa default class ekle
-            pairIcon.src = "https://cdn-icons-png.flaticon.com/512/1828/1828843.png";  // Placeholder ikon
-            pairIcon.classList.add('default-icon');
+        function toggleDetails() {
+            const detailedComment = $('.detailed-comment');
+            const btn = $('.show-details-btn');
+            const btnText = btn.find('.btn-text');
+            const btnIcon = btn.find('.btn-icon');
+            
+            if (detailedComment.is(':visible')) {
+                detailedComment.slideUp();
+                btnText.text('Detaylı Analiz');
+                btnIcon.text('▼');
+            } else {
+                detailedComment.slideDown();
+                btnText.text('Analizi Gizle');
+                btnIcon.text('▲');
+            }
         }
-    } catch (error) {
-        console.error("Parite resmi yüklenemedi", error);
-        pairIcon.src = "https://cdn-icons-png.flaticon.com/512/1828/1828843.png";  // Hata durumunda yedek ikon
-        pairIcon.classList.add('default-icon');
-    }
-});
-
-</script>
-    <footer class="footer">
-    <p>
-        <small>
-            Bu platformda sunulan sinyaller, analizler ve tahminler; gelişmiş indikatörler, makine öğrenmesi ve yapay zeka algoritmaları kullanılarak oluşturulmaktadır.  
-            Kripto para piyasaları yüksek volatiliteye sahip olup, ani fiyat dalgalanmalarına açıktır.  
-            Beklenmeyen ekonomik gelişmeler, jeopolitik olaylar, regülasyon değişiklikleri ve haber akışları, piyasa yönünde ani değişikliklere neden olabilir.  
-            Üretilen sinyaller geçmiş veriler ve istatistiksel modeller baz alınarak hazırlanmakta olup, **gelecekte kesinlik arz etmez**.  
-            Burada sunulan bilgiler, yalnızca genel bilgilendirme amaçlıdır ve **herhangi bir yatırım tavsiyesi niteliğinde değildir**.  
-            Tüm yatırım kararlarınızı kendi araştırmalarınıza, piyasa analizlerinize ve uzman görüşlerine dayanarak vermeniz tavsiye edilir.  
-            Bu platformun geliştiricileri ve operatörleri, doğabilecek herhangi bir mali kayıptan sorumlu tutulamaz.
-        </small>
-    </p>
-</footer>
-
-<style>
-    .footer {
-        text-align: center;
-        padding: 20px;
-        margin-top: 40px;
-        background-color: #333; /* Koyu arka plan */
-        border-top: 1px solid #444;
-        font-size: 0.85rem;
-        color: #ddd; /* Açık gri metin */
-    }
-    .footer small {
-        display: block;
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-</style>
+    </script>
 </body>
 </html>

@@ -1,9 +1,10 @@
-from .utils import get_live_price, get_historical_prices
+from .utils import get_live_price, get_historical_prices, update_crypto_pairs
 from django.utils.timezone import now
 import requests
 from decimal import Decimal
 import numpy as np
 import talib
+from background_task import background
 
 def get_top_15_cryptos():
     url = "https://api.binance.com/api/v3/ticker/24hr"
@@ -68,3 +69,7 @@ def generate_signals():
         print(f"{pair} için sinyal üretildi: {signal} - Fiyat: {live_price}, Hedef: {target_price}")
     
     return signals_list
+
+@background(schedule=3600)  # Her saat başı
+def update_pairs_task():
+    update_crypto_pairs()

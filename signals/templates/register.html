@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torypto | Kayıt Ol</title>
+    
+    <!-- Fontlar -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6a;
+            --secondary: #7000ff;
+            --bg-dark: #0a0b0e;
+            --bg-card: #151720;
+            --text-primary: #ffffff;
+            --text-secondary: #8a8d93;
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --gradient: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(112,0,255,0.1));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reset-container {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .messages {
+            margin-bottom: 1.5rem;
+        }
+
+        .messages p {
+            padding: 0.8rem;
+            border-radius: 8px;
+            background: rgba(255, 59, 48, 0.1);
+            color: #ff3b30;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .links {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Paket bilgisi için özel stiller */
+        .package-info {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .package-info h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .package-features {
+            list-style: none;
+            margin: 1rem 0;
+            padding: 0;
+        }
+
+        .package-features li {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .package-features li:before {
+            content: "✓";
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="reset-container">
+        <div class="logo">TORYPTO</div>
+
+        <div class="package-info">
+            <h3>Ücretsiz Hesap</h3>
+            <div class="package-features">
+                <li>BTC/USDT ve ETH/USDT paritelerini takip edin</li>
+                <li>Temel teknik analiz göstergeleri</li>
+                <li>Gerçek zamanlı fiyat takibi</li>
+                <li>Email bildirimleri</li>
+            </div>
+            <div class="upgrade-info">
+                <p>Daha fazla parite ve özellik için Premium pakete geçin!</p>
+            </div>
+        </div>
+
+        <div class="messages">
+            {% if messages %}
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="username" placeholder="Kullanıcı Adı" required>
+            </div>
+            <div class="form-group">
+                <input type="email" name="email" placeholder="E-posta Adresi" required>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" placeholder="Şifre" required>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password2" placeholder="Şifre (Tekrar)" required>
+            </div>
+            <button type="submit" class="btn">Ücretsiz Hesap Oluştur</button>
+        </form>
+
+        <div class="links">
+            <a href="{% url 'signals:login' %}">Zaten hesabınız var mı? Giriş yapın</a>
+        </div>
+    </div>
+</body>
+</html> 
